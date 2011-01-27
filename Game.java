@@ -7,6 +7,12 @@ import java.awt.event.KeyListener;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
+/*
+	TODO: Make time smooth.
+	TODO: Walking animation
+	TODO: Pretty much everything
+*/
+
 public class Game extends Applet implements Runnable, KeyListener {
 	public static final int MAPWIDTH = 20;
 	public static final int MAPHEIGHT = 15;
@@ -35,12 +41,10 @@ public class Game extends Applet implements Runnable, KeyListener {
 		dbImage = new BufferedImage(BUFFERWIDTH,BUFFERHEIGHT,BufferedImage.TYPE_INT_ARGB);
 		g = dbImage.createGraphics();
 		appletg = this.getGraphics();
-		new Thread(this).start();
 		keys = new boolean[NUMKEYS];
 		addKeyListener(this);
 
-
-		SKYCOLOR = new Color(124,176,195);
+		new Thread(this).start();
 	}
 
 	public void run(){
@@ -61,10 +65,15 @@ public class Game extends Applet implements Runnable, KeyListener {
 
 			// Collide players with entities
 			for(int i = 0; i < entities.size(); ++i){
-				if(Solid.collides(p1,entities.get(i)))
+				if(Solid.collides(p1,entities.get(i))){
 					p1.handleCollision(entities.get(i));
-				if(Solid.collides(p2,entities.get(i)))
+					entities.get(i).handleCollision(p1);
+				}
+				if(Solid.collides(p2,entities.get(i))){
 					p2.handleCollision(entities.get(i));
+					entities.get(i).handleCollision(p2);
+				}
+				entities.get(i).update();
 			}
 
 			/*
@@ -99,6 +108,7 @@ public class Game extends Applet implements Runnable, KeyListener {
 	}
 
 	public boolean loadResources(){
+		SKYCOLOR = new Color(124,176,195);
 		try{
 			imgTiles = ImageIO.read(getClass().getResource("gfx/tiles.png"));
 			imgSkins = ImageIO.read(getClass().getResource("gfx/skins.png"));

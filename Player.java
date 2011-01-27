@@ -3,7 +3,7 @@ import java.awt.Graphics;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 
-public class Player extends Solid {
+public class Player extends Entity {
 	public static final int MOVESPEED = 4;
 	public static final float JUMPPOWER = 9.f;
 	public static final float MAXSPEED = 8.f;
@@ -19,7 +19,7 @@ public class Player extends Solid {
 	public boolean[] keys;
 
 	public Player(int x, int y, int player, int skin){
-		super(x+3,y,10,16);
+		super(x+3,y,10,16,Entity.TYPE_PLAYER);
 		this.xspeed = this.yspeed = 0;
 		this.player = player;	
 		this.skin = skin;
