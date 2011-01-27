@@ -35,7 +35,7 @@ public class Player extends Entity {
 		}
 	}
 
-	public void move(Map map, boolean[] keys){
+	public void move(int[][] map, boolean[] keys){
 		onGround = onCeiling = false;
 
 		yspeed += GRAVITY;
@@ -113,13 +113,13 @@ public class Player extends Entity {
 		}
 	}
 
-	public boolean canMove(Map map, int cx, int cy){
+	public boolean canMove(int[][] map, int cx, int cy){
 		int x1 = (int)cx/16;
 		int x2 = ((int)cx+w-1)/16;
 		int y1 = (int)cy/16;
 		int y2 = ((int)cy+h-1)/16;
 
-		if(map.map[x1][y1] == 1 || map.map[x2][y1] == 1 || map.map[x1][y2] == 1 || map.map[x2][y2] == 1)
+		if(map[x1][y1] == 1 || map[x2][y1] == 1 || map[x1][y2] == 1 || map[x2][y2] == 1)
 			return false;
 		return true;
 	}

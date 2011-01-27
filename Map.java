@@ -1,12 +1,10 @@
 import java.util.ArrayList;
 import java.io.Serializable;
 
-public class Map implements Serializable {
-	public int[][] map;
-	public ArrayList<MapEntity> entities;
+public class Map {
+	public static final int TYPE_BLANK = 0;
+	public static final int TYPE_SOLID = 1;
+	public static final int TYPE_JUMPPAD = 2;
 
-	public Map(int w, int h){
-		map = new int[w][h];
-		entities = new ArrayList<MapEntity>();
-	}
+	public static final int BLOCK_TYPES = 3;
 }

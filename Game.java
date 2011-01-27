@@ -30,7 +30,7 @@ public class Game extends Applet implements Runnable, KeyListener {
 	private Graphics appletg;
 	private BufferedImage dbImage;
 	private BufferedImage imgTiles, imgSkins, imgEntities;
-	private Map map;
+	private int[][] map;
 	private boolean keys[];
 	private Player p1,p2;
 	private ArrayList<Entity> entities;
@@ -52,7 +52,8 @@ public class Game extends Applet implements Runnable, KeyListener {
 		loadLevelFromFile("map1.map");
 		loadResources();
 		entities = new ArrayList<Entity>();
-		entities.add(new Jumppad((MAPWIDTH/2)*16,(MAPHEIGHT-2)*16,-15.f));
+		entities.add(new Jumppad(16,(MAPHEIGHT-2)*16,-15.f));
+		entities.add(new Jumppad((MAPWIDTH-2)*16,(MAPHEIGHT-2)*16,-15.f));
 		p1 = new Player(6*CELLWIDTH,4*CELLWIDTH,1,0);
 		p2 = new Player((MAPWIDTH-6)*CELLWIDTH,4*CELLWIDTH,2,1);
 		while(running){
@@ -85,7 +86,7 @@ public class Game extends Applet implements Runnable, KeyListener {
 			for(int iy = 0; iy < MAPHEIGHT; ++iy){
 				for(int ix = 0; ix < MAPWIDTH; ++ix){
 					// Normal block
-					if(map.map[ix][iy] == 1){
+					if(map[ix][iy] == 1){
 						g.drawImage(imgTiles, ix*CELLWIDTH, iy*CELLWIDTH, CELLWIDTH, CELLWIDTH, null);
 					}
 				}
@@ -123,13 +124,23 @@ public class Game extends Applet implements Runnable, KeyListener {
 		try{
 			FileInputStream fileIn = new FileInputStream(filename);
 			ObjectInputStream in = new ObjectInputStream(fileIn);
-			map = (Map) in.readObject();
+			map = (int[][]) in.readObject();
 			in.close();
 			fileIn.close();
 		} catch (IOException ioe) {
 			ioe.printStackTrace();
 		} catch (ClassNotFoundException cnfe) {
 			cnfe.printStackTrace();
+		}
+		for(int iy = 0; iy < MAPHEIGHT; ++iy){
+			for(int ix = 0; ix < MAPWIDTH; ++ix){
+				if(map[ix][iy] > 0){
+					switch(map[ix][iy]){
+						case Map.TYPE_JUMPPAD: entities.add(new Jumppad(ix*16,iy*16,Jumppad.POWER));
+							 map[ix][iy] = Map.TYPE_BLANK; break;
+					}
+				}
+			}
 		}
 	}
 

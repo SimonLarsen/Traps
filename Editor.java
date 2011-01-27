@@ -7,14 +7,12 @@ import java.awt.event.KeyEvent;
 import java.io.*;
 
 public class Editor extends JFrame {
-	public static final int MAPWIDTH = 20;
-	public static final int MAPHEIGHT = 15;
-	public static final int CELLW = 16;
-	public static final int SCREENWIDTH = MAPWIDTH*CELLW;
-	public static final int SCREENHEIGHT = MAPHEIGHT*CELLW;
+	public static final int CELLW = 32;
+	public static final int SCREENWIDTH = Game.MAPWIDTH*CELLW;
+	public static final int SCREENHEIGHT = Game.MAPHEIGHT*CELLW;
 	public static final String filename = "map1.map";
 
-	private Map map;
+	private int[][] map;
 	private MyCanvas canvas;
 
 	public Editor(){
@@ -49,15 +47,15 @@ public class Editor extends JFrame {
 		try{
 			FileInputStream fileIn = new FileInputStream(filename);
 			ObjectInputStream in = new ObjectInputStream(fileIn);
-			map = (Map) in.readObject();
+			map = (int[][]) in.readObject();
 			in.close();
 			fileIn.close();
 			System.out.println("Map read from " + filename);
 		} catch (IOException ioe) {
-			map = new Map(MAPWIDTH,MAPHEIGHT);
+			map = new int[Game.MAPWIDTH][Game.MAPHEIGHT];
 			System.out.println("Couldn't read map " + filename + "\nCreating new map.");
 		} catch (ClassNotFoundException cnfe) {
-			map = new Map(MAPWIDTH,MAPHEIGHT);
+			map = new int[Game.MAPWIDTH][Game.MAPHEIGHT];
 			System.out.println("Couldn't read map " + filename + "\nCreating new map.");
 		}
 	}
@@ -65,49 +63,52 @@ public class Editor extends JFrame {
 	private class MyCanvas extends Canvas implements MouseListener, KeyListener {
 
 		private boolean drawGrid;
+		private int selection;
 
 		public MyCanvas(){
 			setSize(new Dimension(SCREENWIDTH,SCREENHEIGHT));
 			addMouseListener(this);
 			addKeyListener(this);
 			drawGrid = true;
+			selection = Map.TYPE_SOLID;
 		}
 
 		public void paint(Graphics g){
 			g.setColor(Color.white);
 			g.fillRect(0,0,SCREENWIDTH,SCREENHEIGHT);
 			g.setColor(Color.black);
-			for(int iy = 0; iy < MAPHEIGHT; ++iy){
-				for(int ix = 0; ix < MAPWIDTH; ++ix){
-					if(map.map[ix][iy] == 1)
+			for(int iy = 0; iy < Game.MAPHEIGHT; ++iy){
+				for(int ix = 0; ix < Game.MAPWIDTH; ++ix){
+					if(map[ix][iy] == 1)
 						g.fillRect(ix*CELLW,iy*CELLW,CELLW,CELLW);
 				}
 			}
 			if(drawGrid){
 				g.setColor(Color.gray);
-				for(int ix = 0; ix < MAPWIDTH; ++ix){
+				for(int ix = 0; ix < Game.MAPWIDTH; ++ix){
 					g.drawLine(ix*CELLW,0,ix*CELLW,SCREENHEIGHT);
 				}
-				for(int iy = 0; iy < MAPHEIGHT; ++iy){
+				for(int iy = 0; iy < Game.MAPHEIGHT; ++iy){
 					g.drawLine(0,iy*CELLW,SCREENWIDTH,iy*CELLW);
 				}
 			}
+			g.drawString(""+selection,10,20);
 		}
 
 		public void mouseReleased(MouseEvent e){
 			int mx = e.getX()/CELLW;
 			int my = e.getY()/CELLW;
 			switch(e.getButton()){
-				case MouseEvent.BUTTON1: map.map[mx][my] = 1; break;
-				case MouseEvent.BUTTON3: map.map[mx][my] = 0; break;
-				case MouseEvent.BUTTON2: drawGrid = !drawGrid; break;
+				case MouseEvent.BUTTON1: map[mx][my] = 1; break;
+				case MouseEvent.BUTTON3: map[mx][my] = 0; break;
 			}
 			repaint();
 		}
 
 		public void keyReleased(KeyEvent e){
-			if(e.getKeyChar() == 's'){
-				saveMapToFile(filename);
+			switch(e.getKeyCode()){
+				case KeyEvent.VK_S: saveMapToFile(filename); break;
+				case KeyEvent.VK_G: drawGrid = !drawGrid; repaint(); break;
 			}
 		}
 

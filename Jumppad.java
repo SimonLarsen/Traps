@@ -4,6 +4,7 @@ import java.awt.Graphics;
 
 public class Jumppad extends Entity {
 	public static final int DOWNTIME = 5;
+	public static final float POWER = -15.f;
 	public float power;
 	public int down;
 
