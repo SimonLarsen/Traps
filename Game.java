@@ -23,7 +23,7 @@ public class Game extends Applet implements Runnable, KeyListener {
 	public static final int SCREENWIDTH = MAPWIDTH*CELLWIDTH*SCALE;
 	public static final int SCREENHEIGHT = MAPHEIGHT*CELLWIDTH*SCALE;
 	public static final int NUMKEYS = 525; // Size of keystates array
-	public static final int SLEEPTIME = 22;
+	public static final int SLEEPTIME = 23;
 
 	public static Color SKYCOLOR;
 
@@ -149,6 +149,12 @@ public class Game extends Applet implements Runnable, KeyListener {
 							 map[ix][iy] = Map.TYPE_BLANK; break;
 						case Map.TYPE_P2START: p2 = new Player(ix*CELLWIDTH,iy*CELLWIDTH,2,p2skin);
 							 map[ix][iy] = Map.TYPE_BLANK; break;
+						case Map.TYPE_LAVA: int count = 0; int cx = ix;
+								while(map[cx][iy] == Map.TYPE_LAVA && cx < MAPWIDTH && count < 4){
+									map[cx][iy] = Map.TYPE_BLANK; cx++; count++;
+								}
+								entities.add(new Lava(ix*CELLWIDTH, iy*CELLWIDTH, count));
+								ix = ix+count-1; break;
 					}
 				}
 			}

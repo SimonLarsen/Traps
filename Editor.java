@@ -80,9 +80,10 @@ public class Editor extends JFrame {
 			for(int iy = 0; iy < Game.MAPHEIGHT; ++iy){
 				for(int ix = 0; ix < Game.MAPWIDTH; ++ix){
 					switch(map[ix][iy]){
-						case Map.TYPE_BLANK:   g.setColor(Color.white); break;
-						case Map.TYPE_SOLID:   g.setColor(Color.black); break;
-						case Map.TYPE_JUMPPAD: g.setColor(Color.red); break;
+						case Map.TYPE_BLANK:   g.setColor(Color.white);  break;
+						case Map.TYPE_SOLID:   g.setColor(Color.black);  break;
+						case Map.TYPE_JUMPPAD: g.setColor(Color.red);    break;
+						case Map.TYPE_LAVA:   g.setColor(Color.orange); break;
 						default: g.setColor(Color.white); break;
 					}
 					g.fillRect(ix*CELLW,iy*CELLW,CELLW,CELLW);
