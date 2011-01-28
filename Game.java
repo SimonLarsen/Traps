@@ -23,6 +23,7 @@ public class Game extends Applet implements Runnable, KeyListener {
 	public static final int SCREENWIDTH = MAPWIDTH*CELLWIDTH*SCALE;
 	public static final int SCREENHEIGHT = MAPHEIGHT*CELLWIDTH*SCALE;
 	public static final int NUMKEYS = 525; // Size of keystates array
+	public static final int SLEEPTIME = 22;
 
 	public static Color SKYCOLOR;
 
@@ -34,10 +35,9 @@ public class Game extends Applet implements Runnable, KeyListener {
 	private boolean keys[];
 	private Player p1,p2;
 	private ArrayList<Entity> entities;
-	
 	private int p1skin, p2skin;
-
 	private boolean running;
+	private long time;
 
 	public void start(){
 		dbImage = new BufferedImage(BUFFERWIDTH,BUFFERHEIGHT,BufferedImage.TYPE_INT_ARGB);
@@ -59,6 +59,7 @@ public class Game extends Applet implements Runnable, KeyListener {
 		// p1 = new Player(0,0,1,0);
 		// p2 = new Player(0,0,2,1);
 		while(running){
+			time = System.currentTimeMillis();
 			/*
 				Game logic
 			*/
@@ -104,9 +105,12 @@ public class Game extends Applet implements Runnable, KeyListener {
 			// Draw buffer to screen
 			appletg.drawImage(dbImage, 0, 0, SCREENWIDTH, SCREENHEIGHT, this);
 
-			try{
-				Thread.sleep(15);
-			} catch (Exception e) {}
+			long diffTime = System.currentTimeMillis() - time;
+			if(diffTime < SLEEPTIME){
+				try{
+					Thread.sleep(SLEEPTIME - diffTime);
+				} catch (Exception e) {}
+			}
 		}
 	}
 

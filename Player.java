@@ -19,7 +19,7 @@ public class Player extends Entity {
 	public boolean[] keys;
 
 	public Player(int x, int y, int player, int skin){
-		super(x+3,y,10,16,Entity.TYPE_PLAYER);
+		super(x+3,y,10,16);
 		this.xspeed = this.yspeed = 0;
 		this.player = player;	
 		this.skin = skin;
@@ -73,13 +73,13 @@ public class Player extends Entity {
 		// Handle jump and double jump
 		if(keys[cs[2]]){
 			if(onGround){
-				yspeed -= JUMPPOWER;
+				yspeed = -JUMPPOWER;
 				djwait = DOUBLEJUMPWAIT;
 				keys[cs[2]] = false;
 			}
 			//else if(djwait < 0 && hasDoubleJumped == false){
-			else if(hasDoubleJumped == false && Math.abs(yspeed) < 2.0f){
-				yspeed -= (JUMPPOWER * 0.6); // Cut down jumppower second time
+			else if(hasDoubleJumped == false && yspeed > 2.0f){
+				yspeed = -(JUMPPOWER * 0.8f); // Cut down jumppower second time
 				hasDoubleJumped = true;
 			}
 		}

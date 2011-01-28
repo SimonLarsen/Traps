@@ -9,7 +9,7 @@ public class Jumppad extends Entity {
 	public int down;
 
 	public Jumppad(int x,int y, float power){
-		super(x+1,y+9,14,7,Entity.TYPE_JUMPPAD_UP);
+		super(x+1,y+9,14,7);
 		this.power = power;
 	}
 

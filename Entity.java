@@ -6,11 +6,8 @@ public class Entity extends Solid {
 	public static final int TYPE_PLAYER = 0;
 	public static final int TYPE_JUMPPAD_UP = 1;
 
-	public int type;
-
-	public Entity(int x, int y, int w, int h, int type) {
+	public Entity(int x, int y, int w, int h) {
 		super(x,y,w,h);
-		this.type = type;
 	}
 
 	public void update(){
