@@ -78,7 +78,7 @@ public class Player extends Entity {
 				keys[cs[2]] = false;
 			}
 			//else if(djwait < 0 && hasDoubleJumped == false){
-			else if(hasDoubleJumped == false && yspeed > 2.0f){
+			else if(hasDoubleJumped == false && yspeed > -2.0f){
 				yspeed = -(JUMPPOWER * 0.8f); // Cut down jumppower second time
 				hasDoubleJumped = true;
 			}
@@ -114,6 +114,7 @@ public class Player extends Entity {
 		}
 		// Lava
 		else if(e instanceof Lava){
+			yspeed = xspeed = 0.f;
 			setPos(16,16);
 		}
 	}

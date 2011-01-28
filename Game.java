@@ -25,6 +25,8 @@ public class Game extends Applet implements Runnable, KeyListener {
 	public static final int NUMKEYS = 525; // Size of keystates array
 	public static final int SLEEPTIME = 23;
 
+	public static final boolean DEBUG_INFO = true;
+
 	public static Color SKYCOLOR;
 
 	private Graphics2D g;
@@ -119,6 +121,9 @@ public class Game extends Applet implements Runnable, KeyListener {
 			// Draw players
 			p1.draw(g,imgSkins);
 			p2.draw(g,imgSkins);
+			//Debug info
+			if(DEBUG_INFO)
+				drawDebugInfo(g);
 			// Draw buffer to screen
 			appletg.drawImage(dbImage, 0, 0, SCREENWIDTH, SCREENHEIGHT, this);
 
@@ -177,6 +182,14 @@ public class Game extends Applet implements Runnable, KeyListener {
 				}
 			}
 		}
+	}
+
+	public void drawDebugInfo(Graphics g){
+		g.setColor(Color.black);
+		g.drawString("Entities: " + entities.size(),8,16);
+		g.drawString("Particles: " + particles.size(),8,32);
+		g.drawString("P1 X: " + p1.x + " Y: " + p1.y,8,48);
+		g.drawString("P2 X: " + p2.x + " Y: " + p2.y,8,64);
 	}
 
 	public void keyPressed(KeyEvent e) {

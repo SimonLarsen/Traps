@@ -1,4 +1,5 @@
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import javax.swing.JFrame;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseEvent;
@@ -9,8 +10,12 @@ import java.io.*;
 public class Editor extends JFrame {
 	public static final int CELLW = 32;
 	public static final int SCREENWIDTH = Game.MAPWIDTH*CELLW;
-	public static final int SCREENHEIGHT = Game.MAPHEIGHT*CELLW;
+	public static final int SCREENHEIGHT = Game.MAPHEIGHT*CELLW+32;
 	public static final String filename = "map1.map";
+	public static final String[] BLOCK_NAMES = { "Blank", "Solid", "Jumppad", "P1 spawn", "P2 spawn", "Lava" };
+
+	private BufferedImage dbImage;
+	private Graphics dbg;
 
 	private int[][] map;
 	private MyCanvas canvas;
@@ -22,6 +27,8 @@ public class Editor extends JFrame {
 		pack();
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		dbImage = new BufferedImage(SCREENWIDTH,SCREENHEIGHT,BufferedImage.TYPE_INT_ARGB);
+		dbg = dbImage.getGraphics();
 	}
 
 	public static void main (String[] args){
@@ -74,6 +81,11 @@ public class Editor extends JFrame {
 		}
 
 		public void paint(Graphics g){
+			drawScreen(dbg);
+			g.drawImage(dbImage,0,0,null);
+		}
+
+		public void drawScreen(Graphics g){
 			g.setColor(Color.white);
 			g.fillRect(0,0,SCREENWIDTH,SCREENHEIGHT);
 			g.setColor(Color.black);
@@ -97,13 +109,14 @@ public class Editor extends JFrame {
 			if(drawGrid){
 				g.setColor(Color.gray);
 				for(int ix = 0; ix < Game.MAPWIDTH; ++ix){
-					g.drawLine(ix*CELLW,0,ix*CELLW,SCREENHEIGHT);
+					g.drawLine(ix*CELLW,0,ix*CELLW,Game.MAPHEIGHT*CELLW);
 				}
 				for(int iy = 0; iy < Game.MAPHEIGHT; ++iy){
-					g.drawLine(0,iy*CELLW,SCREENWIDTH,iy*CELLW);
+					g.drawLine(0,iy*CELLW,Game.MAPWIDTH*CELLW,iy*CELLW);
 				}
 			}
-			g.drawString(""+selection,10,20);
+			g.setColor(Color.black);
+			g.drawString(BLOCK_NAMES[selection],10,Game.MAPHEIGHT*CELLW+20);
 		}
 
 		public void mouseReleased(MouseEvent e){
