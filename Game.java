@@ -6,9 +6,9 @@ import java.awt.image.BufferedImage;
 import java.awt.event.KeyListener;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 /*
-	TODO: Make time smooth.
 	TODO: Walking animation
 	TODO: Pretty much everything
 */
@@ -30,11 +30,12 @@ public class Game extends Applet implements Runnable, KeyListener {
 	private Graphics2D g;
 	private Graphics appletg;
 	private BufferedImage dbImage;
-	private BufferedImage imgTiles, imgSkins, imgEntities;
+	private BufferedImage imgTiles, imgSkins, imgEntities, imgParticles;
 	private int[][] map;
 	private boolean keys[];
 	private Player p1,p2;
 	private ArrayList<Entity> entities;
+	private ArrayList<Particle> particles;
 	private int p1skin, p2skin;
 	private boolean running;
 	private long time;
@@ -45,6 +46,7 @@ public class Game extends Applet implements Runnable, KeyListener {
 		appletg = this.getGraphics();
 		keys = new boolean[NUMKEYS];
 		entities = new ArrayList<Entity>();
+		particles = new ArrayList<Particle>();
 		addKeyListener(this);
 
 		new Thread(this).start();
@@ -69,15 +71,20 @@ public class Game extends Applet implements Runnable, KeyListener {
 
 			// Collide players with entities
 			for(int i = 0; i < entities.size(); ++i){
-				if(Solid.collides(p1,entities.get(i))){
-					p1.handleCollision(entities.get(i));
-					entities.get(i).handleCollision(p1);
+				Entity e = entities.get(i);
+				if(Solid.collides(p1,e)){
+					if(e instanceof Lava)
+						particles.add(new BurntCorpse((int)p1.x,(int)p1.y));
+					p1.handleCollision(e);
+					e.handleCollision(p1);
 				}
-				if(Solid.collides(p2,entities.get(i))){
-					p2.handleCollision(entities.get(i));
-					entities.get(i).handleCollision(p2);
+				if(Solid.collides(p2,e)){
+					if(e instanceof Lava)
+						particles.add(new BurntCorpse((int)p2.x,(int)p2.y));
+					p2.handleCollision(e);
+					e.handleCollision(p2);
 				}
-				entities.get(i).update();
+				e.update();
 			}
 
 			/*
@@ -98,10 +105,20 @@ public class Game extends Applet implements Runnable, KeyListener {
 			for(int i = 0; i < entities.size(); ++i){
 				entities.get(i).draw(g,imgEntities);
 			}
+			// Update and draw particles
+			Iterator<Particle> iter = particles.iterator();
+			while(iter.hasNext()){
+				Particle p = iter.next();
+				if(p.alive == false)
+					iter.remove();
+				else{
+					p.update();
+					p.draw(g,imgParticles);
+				}
+			}
 			// Draw players
 			p1.draw(g,imgSkins);
 			p2.draw(g,imgSkins);
-
 			// Draw buffer to screen
 			appletg.drawImage(dbImage, 0, 0, SCREENWIDTH, SCREENHEIGHT, this);
 
@@ -120,6 +137,7 @@ public class Game extends Applet implements Runnable, KeyListener {
 			imgTiles = ImageIO.read(getClass().getResource("gfx/tiles.png"));
 			imgSkins = ImageIO.read(getClass().getResource("gfx/skins.png"));
 			imgEntities = ImageIO.read(getClass().getResource("gfx/entities.png"));
+			imgParticles = ImageIO.read(getClass().getResource("gfx/particles.png"));
 		} catch (IOException ioe){
 			return false;
 		}
@@ -149,12 +167,12 @@ public class Game extends Applet implements Runnable, KeyListener {
 							 map[ix][iy] = Map.TYPE_BLANK; break;
 						case Map.TYPE_P2START: p2 = new Player(ix*CELLWIDTH,iy*CELLWIDTH,2,p2skin);
 							 map[ix][iy] = Map.TYPE_BLANK; break;
-						case Map.TYPE_LAVA: int count = 0; int cx = ix;
-								while(map[cx][iy] == Map.TYPE_LAVA && cx < MAPWIDTH && count < 4){
-									map[cx][iy] = Map.TYPE_BLANK; cx++; count++;
+						case Map.TYPE_LAVA: int cx = 0;
+								while(map[ix+cx][iy] == Map.TYPE_LAVA && ix+cx < MAPWIDTH){
+									map[ix+cx][iy] = Map.TYPE_BLANK; cx++;
 								}
-								entities.add(new Lava(ix*CELLWIDTH, iy*CELLWIDTH, count));
-								ix = ix+count-1; break;
+								entities.add(new Lava(ix*CELLWIDTH, iy*CELLWIDTH, cx));
+								ix = ix+cx-1; break;
 					}
 				}
 			}

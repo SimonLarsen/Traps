@@ -106,15 +106,15 @@ public class Player extends Entity {
 		}
 	}
 
-	public void setPos(int x, int y){
-		this.x = x;
-		this.y = y;
-	}
-
 	public void handleCollision(Entity e){
+		// Jumppad
 		if(e instanceof Jumppad){
 			Jumppad jp = (Jumppad)e;
 			yspeed = jp.power;
+		}
+		// Lava
+		else if(e instanceof Lava){
+			setPos(16,16);
 		}
 	}
 
@@ -123,6 +123,11 @@ public class Player extends Entity {
 		int x2 = ((int)cx+w-1)/16;
 		int y1 = (int)cy/16;
 		int y2 = ((int)cy+h-1)/16;
+
+		if(x1 < 0 || x2 < 0 || y1 < 0 || y2 < 0)
+			return false;
+		if(x1 >= Game.MAPWIDTH || x2 >= Game.MAPWIDTH || y1 >= Game.MAPHEIGHT || y2 >= Game.MAPHEIGHT)
+			return false;
 
 		if(map[x1][y1] == 1 || map[x2][y1] == 1 || map[x1][y2] == 1 || map[x2][y2] == 1)
 			return false;
@@ -138,5 +143,10 @@ public class Player extends Entity {
 		else{
 			g.drawImage(skins, (int)x-3,(int)y,(int)x+13,(int)y+16, 0,skin*16,16,(skin+1)*16, null);
 		}
+	}
+
+	public void setPos(int x, int y){
+		this.x = x;
+		this.y = y;
 	}
 }
