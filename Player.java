@@ -106,6 +106,11 @@ public class Player extends Entity {
 		}
 	}
 
+	public void setPos(int x, int y){
+		this.x = x;
+		this.y = y;
+	}
+
 	public void handleCollision(Entity e){
 		if(e instanceof Jumppad){
 			Jumppad jp = (Jumppad)e;

@@ -34,6 +34,8 @@ public class Game extends Applet implements Runnable, KeyListener {
 	private boolean keys[];
 	private Player p1,p2;
 	private ArrayList<Entity> entities;
+	
+	private int p1skin, p2skin;
 
 	private boolean running;
 
@@ -42,20 +44,20 @@ public class Game extends Applet implements Runnable, KeyListener {
 		g = dbImage.createGraphics();
 		appletg = this.getGraphics();
 		keys = new boolean[NUMKEYS];
+		entities = new ArrayList<Entity>();
 		addKeyListener(this);
 
 		new Thread(this).start();
 	}
 
 	public void run(){
+		p1skin = 0;
+		p2skin = 1;
 		running = true;
 		loadLevelFromFile("map1.map");
 		loadResources();
-		entities = new ArrayList<Entity>();
-		entities.add(new Jumppad(16,(MAPHEIGHT-2)*16,-15.f));
-		entities.add(new Jumppad((MAPWIDTH-2)*16,(MAPHEIGHT-2)*16,-15.f));
-		p1 = new Player(6*CELLWIDTH,4*CELLWIDTH,1,0);
-		p2 = new Player((MAPWIDTH-6)*CELLWIDTH,4*CELLWIDTH,2,1);
+		// p1 = new Player(0,0,1,0);
+		// p2 = new Player(0,0,2,1);
 		while(running){
 			/*
 				Game logic
@@ -122,7 +124,8 @@ public class Game extends Applet implements Runnable, KeyListener {
 
 	public void loadLevelFromFile(String filename){
 		try{
-			FileInputStream fileIn = new FileInputStream(filename);
+			//FileInputStream fileIn = new FileInputStream(filename);
+			InputStream fileIn = getClass().getResourceAsStream(filename);
 			ObjectInputStream in = new ObjectInputStream(fileIn);
 			map = (int[][]) in.readObject();
 			in.close();
@@ -136,7 +139,11 @@ public class Game extends Applet implements Runnable, KeyListener {
 			for(int ix = 0; ix < MAPWIDTH; ++ix){
 				if(map[ix][iy] > 0){
 					switch(map[ix][iy]){
-						case Map.TYPE_JUMPPAD: entities.add(new Jumppad(ix*16,iy*16,Jumppad.POWER));
+						case Map.TYPE_JUMPPAD: entities.add(new Jumppad(ix*CELLWIDTH,iy*CELLWIDTH,Jumppad.POWER));
+							 map[ix][iy] = Map.TYPE_BLANK; break;
+						case Map.TYPE_P1START: p1 = new Player(ix*CELLWIDTH,iy*CELLWIDTH,1,p1skin);
+							 map[ix][iy] = Map.TYPE_BLANK; break;
+						case Map.TYPE_P2START: p2 = new Player(ix*CELLWIDTH,iy*CELLWIDTH,2,p2skin);
 							 map[ix][iy] = Map.TYPE_BLANK; break;
 					}
 				}

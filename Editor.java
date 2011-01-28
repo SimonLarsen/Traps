@@ -79,8 +79,18 @@ public class Editor extends JFrame {
 			g.setColor(Color.black);
 			for(int iy = 0; iy < Game.MAPHEIGHT; ++iy){
 				for(int ix = 0; ix < Game.MAPWIDTH; ++ix){
-					if(map[ix][iy] == 1)
-						g.fillRect(ix*CELLW,iy*CELLW,CELLW,CELLW);
+					switch(map[ix][iy]){
+						case Map.TYPE_BLANK:   g.setColor(Color.white); break;
+						case Map.TYPE_SOLID:   g.setColor(Color.black); break;
+						case Map.TYPE_JUMPPAD: g.setColor(Color.red); break;
+						default: g.setColor(Color.white); break;
+					}
+					g.fillRect(ix*CELLW,iy*CELLW,CELLW,CELLW);
+					g.setColor(Color.black);
+					if(map[ix][iy] == Map.TYPE_P1START)
+						g.drawString("P1",ix*CELLW+10,iy*CELLW+20);
+					if(map[ix][iy] == Map.TYPE_P2START)
+						g.drawString("P2",ix*CELLW+10,iy*CELLW+20);
 				}
 			}
 			if(drawGrid){
@@ -99,7 +109,7 @@ public class Editor extends JFrame {
 			int mx = e.getX()/CELLW;
 			int my = e.getY()/CELLW;
 			switch(e.getButton()){
-				case MouseEvent.BUTTON1: map[mx][my] = 1; break;
+				case MouseEvent.BUTTON1: map[mx][my] = selection; break;
 				case MouseEvent.BUTTON3: map[mx][my] = 0; break;
 			}
 			repaint();
@@ -109,6 +119,10 @@ public class Editor extends JFrame {
 			switch(e.getKeyCode()){
 				case KeyEvent.VK_S: saveMapToFile(filename); break;
 				case KeyEvent.VK_G: drawGrid = !drawGrid; repaint(); break;
+			}
+			if(e.getKeyCode() >= KeyEvent.VK_0 && e.getKeyCode() <= KeyEvent.VK_0 + Map.BLOCK_TYPES-1){
+				selection = e.getKeyCode() - KeyEvent.VK_0;
+				repaint();
 			}
 		}
 
