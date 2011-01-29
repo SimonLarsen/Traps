@@ -35,6 +35,10 @@ public class Player extends Entity {
 		}
 	}
 
+	public Player(Spawn sp, int player, int skin){
+		this(sp.x,sp.y,player,skin);
+	}
+
 	public void move(int[][] map, boolean[] keys){
 		onGround = onCeiling = false;
 
@@ -112,10 +116,8 @@ public class Player extends Entity {
 			Jumppad jp = (Jumppad)e;
 			yspeed = jp.power;
 		}
-		// Lava
 		else if(e instanceof Lava){
-			yspeed = xspeed = 0.f;
-			setPos(16,16);
+			yspeed = 0;
 		}
 	}
 

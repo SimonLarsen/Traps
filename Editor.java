@@ -12,7 +12,7 @@ public class Editor extends JFrame {
 	public static final int SCREENWIDTH = Game.MAPWIDTH*CELLW;
 	public static final int SCREENHEIGHT = Game.MAPHEIGHT*CELLW+32;
 	public static final String filename = "map1.map";
-	public static final String[] BLOCK_NAMES = { "Blank", "Solid", "Jumppad", "P1 spawn", "P2 spawn", "Lava", "PowerBox" };
+	public static final String[] BLOCK_NAMES = {"Blank", "Solid", "Jumppad", "Lava", "Powerbox", "Spawn"};
 
 	private BufferedImage dbImage;
 	private Graphics dbg;
@@ -101,10 +101,16 @@ public class Editor extends JFrame {
 					}
 					g.fillRect(ix*CELLW,iy*CELLW,CELLW,CELLW);
 					g.setColor(Color.black);
-					if(map[ix][iy] == Map.TYPE_P1START)
-						g.drawString("P1",ix*CELLW+10,iy*CELLW+20);
-					if(map[ix][iy] == Map.TYPE_P2START)
-						g.drawString("P2",ix*CELLW+10,iy*CELLW+20);
+					switch(map[ix][iy]){
+						case Map.TYPE_SPAWN:
+							g.drawString("SP",ix*CELLW+10,iy*CELLW+20); break;
+						case Map.TYPE_LAVA:
+							g.drawString("lava",ix*CELLW+5,iy*CELLW+20); break;
+						case Map.TYPE_JUMPPAD:
+							g.drawString("Jump",ix*CELLW,iy*CELLW+20); break;
+						case Map.TYPE_POWERBOX:
+							g.drawString("?",ix*CELLW+15,iy*CELLW+20); break;
+					}
 				}
 			}
 			if(drawGrid){

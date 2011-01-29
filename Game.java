@@ -7,6 +7,7 @@ import java.awt.event.KeyListener;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Random;
 
 /*
 	TODO: Walking animation
@@ -25,7 +26,7 @@ public class Game extends Applet implements Runnable, KeyListener {
 	public static final int NUMKEYS = 525; // Size of keystates array
 	public static final int SLEEPTIME = 23;
 
-	public static final boolean DEBUG_INFO = true;
+	public static final boolean DEBUG_INFO = false;
 
 	public static Color SKYCOLOR;
 
@@ -38,6 +39,8 @@ public class Game extends Applet implements Runnable, KeyListener {
 	private Player p1,p2;
 	private ArrayList<Entity> entities;
 	private ArrayList<Particle> particles;
+	private ArrayList<Spawn> spawns;
+	private Random rand;
 	private int p1skin, p2skin;
 	private boolean running;
 	private long time;
@@ -49,7 +52,9 @@ public class Game extends Applet implements Runnable, KeyListener {
 		keys = new boolean[NUMKEYS];
 		entities = new ArrayList<Entity>();
 		particles = new ArrayList<Particle>();
+		spawns = new ArrayList<Spawn>();
 		addKeyListener(this);
+		rand = new Random();
 
 		new Thread(this).start();
 	}
@@ -60,8 +65,8 @@ public class Game extends Applet implements Runnable, KeyListener {
 		running = true;
 		loadLevelFromFile("map1.map");
 		loadResources();
-		// p1 = new Player(0,0,1,0);
-		// p2 = new Player(0,0,2,1);
+		p1 = new Player(spawns.get(rand.nextInt(spawns.size())),1,0);
+		p2 = new Player(spawns.get(rand.nextInt(spawns.size())),2,1);
 		while(running){
 			time = System.currentTimeMillis();
 			/*
@@ -75,14 +80,20 @@ public class Game extends Applet implements Runnable, KeyListener {
 			for(int i = 0; i < entities.size(); ++i){
 				Entity e = entities.get(i);
 				if(Solid.collides(p1,e)){
-					if(e instanceof Lava)
+					if(e instanceof Lava){
 						particles.add(new BurntCorpse((int)p1.x,(int)p1.y,p1.dir));
+						Spawn sp = spawns.get(rand.nextInt(spawns.size()));
+						p1.setPos(sp.x,sp.y);
+					}
 					p1.handleCollision(e);
 					e.handleCollision(p1);
 				}
 				if(Solid.collides(p2,e)){
-					if(e instanceof Lava)
+					if(e instanceof Lava){
 						particles.add(new BurntCorpse((int)p2.x,(int)p2.y,p2.dir));
+						Spawn sp = spawns.get(rand.nextInt(spawns.size()));
+						p2.setPos(sp.x,sp.y);
+					}
 					p2.handleCollision(e);
 					e.handleCollision(p2);
 				}
@@ -168,9 +179,7 @@ public class Game extends Applet implements Runnable, KeyListener {
 					switch(map[ix][iy]){
 						case Map.TYPE_JUMPPAD: entities.add(new Jumppad(ix*CELLWIDTH,iy*CELLWIDTH,Jumppad.POWER));
 							 map[ix][iy] = Map.TYPE_BLANK; break;
-						case Map.TYPE_P1START: p1 = new Player(ix*CELLWIDTH,iy*CELLWIDTH,1,p1skin);
-							 map[ix][iy] = Map.TYPE_BLANK; break;
-						case Map.TYPE_P2START: p2 = new Player(ix*CELLWIDTH,iy*CELLWIDTH,2,p2skin);
+						case Map.TYPE_SPAWN: spawns.add(new Spawn(ix*CELLWIDTH,iy*CELLWIDTH));
 							 map[ix][iy] = Map.TYPE_BLANK; break;
 						case Map.TYPE_LAVA: int cx = 0;
 								while(map[ix+cx][iy] == Map.TYPE_LAVA && ix+cx < MAPWIDTH){
