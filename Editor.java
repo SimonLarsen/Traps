@@ -12,7 +12,7 @@ public class Editor extends JFrame {
 	public static final int SCREENWIDTH = Game.MAPWIDTH*CELLW;
 	public static final int SCREENHEIGHT = Game.MAPHEIGHT*CELLW+32;
 	public static final String filename = "map1.map";
-	public static final String[] BLOCK_NAMES = { "Blank", "Solid", "Jumppad", "P1 spawn", "P2 spawn", "Lava" };
+	public static final String[] BLOCK_NAMES = { "Blank", "Solid", "Jumppad", "P1 spawn", "P2 spawn", "Lava", "PowerBox" };
 
 	private BufferedImage dbImage;
 	private Graphics dbg;
@@ -92,10 +92,11 @@ public class Editor extends JFrame {
 			for(int iy = 0; iy < Game.MAPHEIGHT; ++iy){
 				for(int ix = 0; ix < Game.MAPWIDTH; ++ix){
 					switch(map[ix][iy]){
-						case Map.TYPE_BLANK:   g.setColor(Color.white);  break;
-						case Map.TYPE_SOLID:   g.setColor(Color.black);  break;
-						case Map.TYPE_JUMPPAD: g.setColor(Color.red);    break;
-						case Map.TYPE_LAVA:   g.setColor(Color.orange); break;
+						case Map.TYPE_BLANK:    g.setColor(Color.white);  break;
+						case Map.TYPE_SOLID:    g.setColor(Color.black);  break;
+						case Map.TYPE_JUMPPAD:  g.setColor(Color.red);    break;
+						case Map.TYPE_LAVA:     g.setColor(Color.orange); break;
+						case Map.TYPE_POWERBOX: g.setColor(Color.yellow); break;
 						default: g.setColor(Color.white); break;
 					}
 					g.fillRect(ix*CELLW,iy*CELLW,CELLW,CELLW);

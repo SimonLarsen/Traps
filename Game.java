@@ -43,7 +43,7 @@ public class Game extends Applet implements Runnable, KeyListener {
 	private long time;
 
 	public void start(){
-		dbImage = new BufferedImage(BUFFERWIDTH,BUFFERHEIGHT,BufferedImage.TYPE_INT_ARGB);
+		dbImage = new BufferedImage(BUFFERWIDTH,BUFFERHEIGHT,BufferedImage.TYPE_INT_RGB);
 		g = dbImage.createGraphics();
 		appletg = this.getGraphics();
 		keys = new boolean[NUMKEYS];
@@ -76,13 +76,13 @@ public class Game extends Applet implements Runnable, KeyListener {
 				Entity e = entities.get(i);
 				if(Solid.collides(p1,e)){
 					if(e instanceof Lava)
-						particles.add(new BurntCorpse((int)p1.x,(int)p1.y));
+						particles.add(new BurntCorpse((int)p1.x,(int)p1.y,p1.dir));
 					p1.handleCollision(e);
 					e.handleCollision(p1);
 				}
 				if(Solid.collides(p2,e)){
 					if(e instanceof Lava)
-						particles.add(new BurntCorpse((int)p2.x,(int)p2.y));
+						particles.add(new BurntCorpse((int)p2.x,(int)p2.y,p2.dir));
 					p2.handleCollision(e);
 					e.handleCollision(p2);
 				}
@@ -125,7 +125,7 @@ public class Game extends Applet implements Runnable, KeyListener {
 			if(DEBUG_INFO)
 				drawDebugInfo(g);
 			// Draw buffer to screen
-			appletg.drawImage(dbImage, 0, 0, SCREENWIDTH, SCREENHEIGHT, this);
+			appletg.drawImage(dbImage, 0, 0, SCREENWIDTH, SCREENHEIGHT, this); 
 
 			long diffTime = System.currentTimeMillis() - time;
 			if(diffTime < SLEEPTIME){
@@ -178,6 +178,8 @@ public class Game extends Applet implements Runnable, KeyListener {
 								}
 								entities.add(new Lava(ix*CELLWIDTH, iy*CELLWIDTH, cx));
 								ix = ix+cx-1; break;
+						case Map.TYPE_POWERBOX: entities.add(new PowerBox(ix*CELLWIDTH,iy*CELLWIDTH));
+							 map[ix][iy] = Map.TYPE_BLANK; break;
 					}
 				}
 			}
@@ -188,8 +190,8 @@ public class Game extends Applet implements Runnable, KeyListener {
 		g.setColor(Color.black);
 		g.drawString("Entities: " + entities.size(),8,16);
 		g.drawString("Particles: " + particles.size(),8,32);
-		g.drawString("P1 X: " + p1.x + " Y: " + p1.y,8,48);
-		g.drawString("P2 X: " + p2.x + " Y: " + p2.y,8,64);
+		g.drawString("P1 X: "+(int)p1.x+" Y: "+(int)p1.y,8,48);
+		g.drawString("P2 X: "+(int)p2.x+" Y: "+(int)p2.y,8,64);
 	}
 
 	public void keyPressed(KeyEvent e) {

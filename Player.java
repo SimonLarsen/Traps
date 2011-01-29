@@ -13,7 +13,7 @@ public class Player extends Entity {
 	private float xspeed, yspeed;
 	private int player, skin;
 	private int djwait;
-	private boolean dir; // False = left. True = right.
+	public boolean dir; // False = left. True = right.
 	private boolean onGround, onCeiling, hasDoubleJumped;
 	public int[] cs;
 	public boolean[] keys;

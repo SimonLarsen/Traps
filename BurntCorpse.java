@@ -3,10 +3,12 @@ import java.awt.image.BufferedImage;
 
 public class BurntCorpse extends Particle {
 	private int step;
+	private boolean dir;
 
-	public BurntCorpse(int x, int y){
+	public BurntCorpse(int x, int y, boolean dir){
 		super(x,y);
 		this.step = 0;
+		this.dir = dir;
 	}
 
 	public void update(){
@@ -18,6 +20,9 @@ public class BurntCorpse extends Particle {
 	public void draw(Graphics g, BufferedImage img){
 		int offset = step/4;
 		int xoff = Math.round((float)Math.random());
-		g.drawImage(img,(int)x+xoff,(int)y+offset,(int)x+16+xoff,(int)y+16,0,0,16,16-offset,null);
+		if(dir == false) // left
+			g.drawImage(img,(int)x+xoff,(int)y+offset,(int)x+16+xoff,(int)y+16,16,0,0,16-offset,null);
+		else // right
+			g.drawImage(img,(int)x+xoff,(int)y+offset,(int)x+16+xoff,(int)y+16,0,0,16,16-offset,null);
 	}
 }
