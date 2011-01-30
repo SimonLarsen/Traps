@@ -81,7 +81,7 @@ public class Game extends Applet implements Runnable, KeyListener {
 				Entity e = entities.get(i);
 				if(Solid.collides(p1,e)){
 					if(e instanceof Lava){
-						particles.add(new BurntCorpse((int)p1.x,(int)p1.y,p1.dir));
+						particles.add(new BurntCorpse((int)p1.x-1,(int)p1.y,p1.dir));
 						Spawn sp = spawns.get(rand.nextInt(spawns.size()));
 						p1.setPos(sp.x,sp.y);
 					}
@@ -90,7 +90,7 @@ public class Game extends Applet implements Runnable, KeyListener {
 				}
 				if(Solid.collides(p2,e)){
 					if(e instanceof Lava){
-						particles.add(new BurntCorpse((int)p2.x,(int)p2.y,p2.dir));
+						particles.add(new BurntCorpse((int)p2.x-1,(int)p2.y,p2.dir));
 						Spawn sp = spawns.get(rand.nextInt(spawns.size()));
 						p2.setPos(sp.x,sp.y);
 					}
