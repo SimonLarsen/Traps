@@ -1,6 +1,4 @@
-import java.awt.Rectangle;
 import java.awt.Graphics;
-import java.awt.Color;
 import java.awt.image.BufferedImage;
 
 public class Player extends Entity {
@@ -12,9 +10,9 @@ public class Player extends Entity {
 
 	private float xspeed, yspeed;
 	private int player, skin;
-	private int djwait;
+	private int djwait, walkWait;
 	public boolean dir; // False = left. True = right.
-	private boolean onGround, onCeiling, hasDoubleJumped;
+	private boolean onGround, onCeiling, hasDoubleJumped, walkState, moving;
 	public int[] cs;
 	public boolean[] keys;
 
@@ -40,11 +38,9 @@ public class Player extends Entity {
 	}
 
 	public void move(int[][] map, boolean[] keys){
-		onGround = onCeiling = false;
+		onGround = onCeiling = moving = false;
 
 		yspeed += GRAVITY;
-		//if(yspeed > MAXSPEED)
-		//	yspeed = MAXSPEED;
 
 		// Falling
 		if(yspeed > 0){
@@ -94,6 +90,7 @@ public class Player extends Entity {
 			for(int i = MOVESPEED; i > 0; --i){
 				if(canMove(map,(int)x-i,(int)y)){
 					x = x-i;
+					moving = true;
 					break;
 				}
 			}
@@ -104,10 +101,17 @@ public class Player extends Entity {
 			for(int i = MOVESPEED; i > 0; --i){
 				if(canMove(map,(int)x+i,(int)y)){
 					x = x+i;
+					moving = true;
 					break;
 				}
 			}
 		}
+		if(walkWait < 0){
+			walkState = !walkState;
+			walkWait = 7;
+		}
+		else
+			walkWait--;
 	}
 
 	public void handleCollision(Entity e){
@@ -138,14 +142,28 @@ public class Player extends Entity {
 	}
 
 	public void draw(Graphics g, BufferedImage skins){
-		// left
-		if(dir == false){
-			g.drawImage(skins, (int)x-3,(int)y,(int)x+13,(int)y+16, 16,skin*16,32,(skin+1)*16, null);
+		int srcx = 0;
+		// On ground
+		if(yspeed == 0){
+			// standing still = do nothing = 0
+			if(moving){
+				if(walkState){
+					srcx = 16;
+				}
+				else{
+					srcx = 32;	
+				}
+			}
 		}
-		// right
-		else{
-			g.drawImage(skins, (int)x-3,(int)y,(int)x+13,(int)y+16, 0,skin*16,16,(skin+1)*16, null);
-		}
+		// jumping
+		//else if(yspeed < 0)
+		else
+			srcx = 32;
+		// falling = standing still = 0
+		if(dir) // right
+			g.drawImage(skins, (int)x-3,(int)y,(int)x+13,(int)y+16, srcx,skin*16,srcx+16,(skin+1)*16, null);
+		else    // left
+			g.drawImage(skins, (int)x-3,(int)y,(int)x+13,(int)y+16, srcx+16,skin*16,srcx,(skin+1)*16, null);
 	}
 
 	public void setPos(int x, int y){

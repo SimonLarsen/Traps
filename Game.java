@@ -18,12 +18,12 @@ public class Game extends Applet implements Runnable, KeyListener {
 	public static final int MAPWIDTH = 20;
 	public static final int MAPHEIGHT = 15;
 	public static final int CELLWIDTH = 16;
-	public static final int SCALE = 2;
+	public static final int SCALE = 3;
 	public static final int BUFFERWIDTH = MAPWIDTH*CELLWIDTH;
 	public static final int BUFFERHEIGHT = MAPHEIGHT*CELLWIDTH;
 	public static final int SCREENWIDTH = MAPWIDTH*CELLWIDTH*SCALE;
 	public static final int SCREENHEIGHT = MAPHEIGHT*CELLWIDTH*SCALE;
-	public static final int NUMKEYS = 525; // Size of keystates array
+	public static final int NUMKEYS = 256; // Size of keystates array
 	public static final int SLEEPTIME = 23;
 
 	public static final boolean DEBUG_INFO = false;
@@ -66,7 +66,7 @@ public class Game extends Applet implements Runnable, KeyListener {
 		loadLevelFromFile("map1.map");
 		loadResources();
 		p1 = new Player(spawns.get(rand.nextInt(spawns.size())),1,0);
-		p2 = new Player(spawns.get(rand.nextInt(spawns.size())),2,1);
+		p2 = new Player(spawns.get(rand.nextInt(spawns.size())),2,2);
 		while(running){
 			time = System.currentTimeMillis();
 			/*

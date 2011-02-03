@@ -126,6 +126,17 @@ public class Editor extends JFrame {
 			g.drawString(BLOCK_NAMES[selection],10,Game.MAPHEIGHT*CELLW+20);
 		}
 
+		public void solidFrame(){
+			for(int ix = 0; ix < Game.MAPWIDTH; ++ix){
+				map[ix][0] = Map.TYPE_SOLID;
+				map[ix][Game.MAPHEIGHT-1] = Map.TYPE_SOLID;
+			}
+			for (int iy = 0; iy < Game.MAPHEIGHT; ++iy){
+				map[0][iy] = Map.TYPE_SOLID;
+				map[Game.MAPWIDTH-1][iy] = Map.TYPE_SOLID;
+			}
+		}
+
 		public void mouseReleased(MouseEvent e){
 			int mx = e.getX()/CELLW;
 			int my = e.getY()/CELLW;
@@ -140,6 +151,7 @@ public class Editor extends JFrame {
 			switch(e.getKeyCode()){
 				case KeyEvent.VK_S: saveMapToFile(filename); break;
 				case KeyEvent.VK_G: drawGrid = !drawGrid; repaint(); break;
+				case KeyEvent.VK_F: solidFrame(); repaint(); break;
 			}
 			if(e.getKeyCode() >= KeyEvent.VK_0 && e.getKeyCode() <= KeyEvent.VK_0 + Map.BLOCK_TYPES-1){
 				selection = e.getKeyCode() - KeyEvent.VK_0;
