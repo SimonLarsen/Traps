@@ -18,7 +18,7 @@ public class Game extends Applet implements Runnable, KeyListener {
 	public static final int MAPWIDTH = 20;
 	public static final int MAPHEIGHT = 15;
 	public static final int CELLWIDTH = 16;
-	public static final int SCALE = 3;
+	public static final int SCALE = 2;
 	public static final int BUFFERWIDTH = MAPWIDTH*CELLWIDTH;
 	public static final int BUFFERHEIGHT = MAPHEIGHT*CELLWIDTH;
 	public static final int SCREENWIDTH = MAPWIDTH*CELLWIDTH*SCALE;
