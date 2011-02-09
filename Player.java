@@ -143,6 +143,10 @@ public class Player extends Entity {
 
 	public void draw(Graphics g, BufferedImage skins){
 		int srcx = 0;
+		/*
+			REMOVED ANIMATIONS FOR NOW
+			TODO: Reimplement
+
 		// On ground
 		if(yspeed == 0){
 			// standing still = do nothing = 0
@@ -160,6 +164,7 @@ public class Player extends Entity {
 		else
 			srcx = 32;
 		// falling = standing still = 0
+		*/
 		if(dir) // right
 			g.drawImage(skins, (int)x-3,(int)y,(int)x+13,(int)y+16, srcx,skin*16,srcx+16,(skin+1)*16, null);
 		else    // left
