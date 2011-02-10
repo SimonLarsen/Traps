@@ -9,18 +9,21 @@ public class Player extends Entity {
 	public static final int DOUBLEJUMPWAIT = 10; // Updates
 
 	private float xspeed, yspeed;
-	private int player, skin;
-	private int djwait, walkWait;
+	public int player;
+	private int skin, djwait;
+	private float walkFrame;
 	public boolean dir; // False = left. True = right.
 	private boolean onGround, onCeiling, hasDoubleJumped, walkState, moving;
 	public int[] cs;
 	public boolean[] keys;
+	public PowerBox currentPower;
 
 	public Player(int x, int y, int player, int skin){
 		super(x+3,y,10,16);
 		this.xspeed = this.yspeed = 0;
 		this.player = player;	
 		this.skin = skin;
+		this.currentPower = null;
 
 		// Create keystate array and 
 		if(player == 1){
@@ -106,12 +109,19 @@ public class Player extends Entity {
 				}
 			}
 		}
-		if(walkWait < 0){
-			walkState = !walkState;
-			walkWait = 7;
+
+		// Check if action button is pressed
+		if(keys[cs[3]]){
+			if(currentPower != null){
+				currentPower.reset();
+				currentPower = null;
+			}
 		}
-		else
-			walkWait--;
+
+		// Increment walk cycle counter
+		walkFrame += 0.25f;
+		if(walkFrame >= 4)
+			walkFrame = 0.f;
 	}
 
 	public void handleCollision(Entity e){
@@ -122,6 +132,11 @@ public class Player extends Entity {
 		}
 		else if(e instanceof Lava){
 			yspeed = 0;
+		}
+		else if(e instanceof PowerBox){
+			if(currentPower == null){
+				currentPower = (PowerBox)e;
+			}
 		}
 	}
 
@@ -143,28 +158,18 @@ public class Player extends Entity {
 
 	public void draw(Graphics g, BufferedImage skins){
 		int srcx = 0;
-		/*
-			REMOVED ANIMATIONS FOR NOW
-			TODO: Reimplement
-
 		// On ground
 		if(yspeed == 0){
 			// standing still = do nothing = 0
 			if(moving){
-				if(walkState){
-					srcx = 16;
-				}
-				else{
-					srcx = 32;	
-				}
+				srcx = (int)walkFrame*16+16;
 			}
 		}
 		// jumping
 		//else if(yspeed < 0)
 		else
-			srcx = 32;
+			srcx = 16;
 		// falling = standing still = 0
-		*/
 		if(dir) // right
 			g.drawImage(skins, (int)x-3,(int)y,(int)x+13,(int)y+16, srcx,skin*16,srcx+16,(skin+1)*16, null);
 		else    // left

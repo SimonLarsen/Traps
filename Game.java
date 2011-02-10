@@ -40,7 +40,7 @@ public class Game extends Applet implements Runnable, KeyListener {
 	private ArrayList<Entity> entities;
 	private ArrayList<Particle> particles;
 	private ArrayList<Spawn> spawns;
-	private Random rand;
+	public static Random rand;
 	private int p1skin, p2skin;
 	private boolean running;
 	private long time;
@@ -85,8 +85,8 @@ public class Game extends Applet implements Runnable, KeyListener {
 						Spawn sp = spawns.get(rand.nextInt(spawns.size()));
 						p1.setPos(sp.x,sp.y);
 					}
-					p1.handleCollision(e);
 					e.handleCollision(p1);
+					p1.handleCollision(e);
 				}
 				if(Solid.collides(p2,e)){
 					if(e instanceof Lava){
@@ -94,8 +94,8 @@ public class Game extends Applet implements Runnable, KeyListener {
 						Spawn sp = spawns.get(rand.nextInt(spawns.size()));
 						p2.setPos(sp.x,sp.y);
 					}
-					p2.handleCollision(e);
 					e.handleCollision(p2);
+					p2.handleCollision(e);
 				}
 				e.update();
 			}
