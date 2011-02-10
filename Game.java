@@ -26,7 +26,7 @@ public class Game extends Applet implements Runnable, KeyListener {
 	public static final int NUMKEYS = 256; // Size of keystates array
 	public static final int SLEEPTIME = 23;
 
-	public static final boolean DEBUG_INFO = false;
+	public static final boolean DEBUG_INFO = true;
 
 	public static Color SKYCOLOR;
 
@@ -61,20 +61,34 @@ public class Game extends Applet implements Runnable, KeyListener {
 
 	public void run(){
 		p1skin = 0;
-		p2skin = 1;
+		p2skin = 2;
 		running = true;
 		loadLevelFromFile("map1.map");
 		loadResources();
-		p1 = new Player(spawns.get(rand.nextInt(spawns.size())),1,0);
-		p2 = new Player(spawns.get(rand.nextInt(spawns.size())),2,2);
+		p1 = new Player(spawns.get(rand.nextInt(spawns.size())),1,p1skin);
+		p2 = new Player(spawns.get(rand.nextInt(spawns.size())),2,p2skin);
 		while(running){
 			time = System.currentTimeMillis();
 			/*
 				Game logic
 			*/
 			// move players
-			p1.move(map,keys);
-			p2.move(map,keys);
+			int p1Status = p1.move(map,keys);
+			int p2Status = p2.move(map,keys);
+			// handle player statuses
+			if(p1Status >= 1 && p1Status <= PowerBox.POWER_TYPES)
+				p2.punish(p1Status);
+			else if(p1Status == Player.RETURN_DIED){
+				p1.deaths++;
+				p1.respawn(spawns.get(rand.nextInt(spawns.size())));
+			}
+
+			if(p2Status >= 1 && p2Status <= PowerBox.POWER_TYPES)
+				p1.punish(p2Status);
+			else if(p2Status == Player.RETURN_DIED){
+				p2.deaths++;
+				p2.respawn(spawns.get(rand.nextInt(spawns.size())));
+			}
 
 			// Collide players with entities
 			for(int i = 0; i < entities.size(); ++i){
@@ -82,8 +96,8 @@ public class Game extends Applet implements Runnable, KeyListener {
 				if(Solid.collides(p1,e)){
 					if(e instanceof Lava){
 						particles.add(new BurntCorpse((int)p1.x-3,(int)p1.y,p1.dir));
-						Spawn sp = spawns.get(rand.nextInt(spawns.size()));
-						p1.setPos(sp.x,sp.y);
+						p1.deaths++;
+						p1.respawn(spawns.get(rand.nextInt(spawns.size())));
 					}
 					e.handleCollision(p1);
 					p1.handleCollision(e);
@@ -91,8 +105,8 @@ public class Game extends Applet implements Runnable, KeyListener {
 				if(Solid.collides(p2,e)){
 					if(e instanceof Lava){
 						particles.add(new BurntCorpse((int)p2.x-3,(int)p2.y,p2.dir));
-						Spawn sp = spawns.get(rand.nextInt(spawns.size()));
-						p2.setPos(sp.x,sp.y);
+						p2.deaths++;
+						p2.respawn(spawns.get(rand.nextInt(spawns.size())));
 					}
 					e.handleCollision(p2);
 					p2.handleCollision(e);
@@ -201,6 +215,8 @@ public class Game extends Applet implements Runnable, KeyListener {
 		g.drawString("Particles: " + particles.size(),8,32);
 		g.drawString("P1 X: "+(int)p1.x+" Y: "+(int)p1.y,8,48);
 		g.drawString("P2 X: "+(int)p2.x+" Y: "+(int)p2.y,8,64);
+		g.drawString("P1 deaths: "+p1.deaths,8,80);
+		g.drawString("P2 deaths: "+p2.deaths,8,96);
 	}
 
 	public void keyPressed(KeyEvent e) {

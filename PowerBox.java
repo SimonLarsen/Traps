@@ -19,7 +19,7 @@ public class PowerBox extends Entity {
 	public void handleCollision(Entity e){
 		if(e instanceof Player){
 			Player p = (Player)e;
-			if(ownedBy == 0 && p.currentPower == null){
+			if(ownedBy == 0 && p.power == null){
 				type = Game.rand.nextInt(POWER_TYPES) + 1;
 				ownedBy = p.player;
 			}

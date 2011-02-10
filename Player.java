@@ -9,21 +9,25 @@ public class Player extends Entity {
 	public static final int DOUBLEJUMPWAIT = 10; // Updates
 
 	private float xspeed, yspeed;
-	public int player;
+	public int player, deaths;
 	private int skin, djwait;
 	private float walkFrame;
 	public boolean dir; // False = left. True = right.
 	private boolean onGround, onCeiling, hasDoubleJumped, walkState, moving;
 	public int[] cs;
 	public boolean[] keys;
-	public PowerBox currentPower;
+	public PowerBox power;
+	private int punishment, punishmentTime;
 
 	public Player(int x, int y, int player, int skin){
 		super(x+3,y,10,16);
 		this.xspeed = this.yspeed = 0;
 		this.player = player;	
 		this.skin = skin;
-		this.currentPower = null;
+		this.power = null;
+		this.deaths = 0;
+
+		this.punishment = this.punishmentTime = 0;
 
 		// Create keystate array and 
 		if(player == 1){
@@ -40,14 +44,20 @@ public class Player extends Entity {
 		this(sp.x,sp.y,player,skin);
 	}
 
-	public void move(int[][] map, boolean[] keys){
-		onGround = onCeiling = moving = false;
+	public int move(int[][] map, boolean[] keys){
+		int returnCode = 0;
 
-		yspeed += GRAVITY;
+		onGround = onCeiling = moving = false;
+		if(punishment == PowerBox.POWER_TYPE_VVVVVV){
+			yspeed -= GRAVITY;
+			moving = false;
+		}
+		else
+			yspeed += GRAVITY;
 
 		// Falling
 		if(yspeed > 0){
-			for(float ys = yspeed; ys > 0; ys-=1){
+			for(float ys = yspeed; ys > 0; ys-=1.f){
 				if(canMove(map,(int)x,(int)(y+ys))){
 					y += ys;
 					break;
@@ -60,7 +70,7 @@ public class Player extends Entity {
 		}
 		// Jumping
 		if(yspeed < 0){
-			for(int ys = (int)yspeed; ys < 0; ys++){
+			for(float ys = yspeed; ys < 0; ys+=1.f){
 				if(canMove(map,(int)x,(int)(y+ys))){
 					y += ys;
 					break;
@@ -87,41 +97,57 @@ public class Player extends Entity {
 			}
 		}
 		
-		// Move left
-		if(keys[cs[0]]){
-			dir = false;
-			for(int i = MOVESPEED; i > 0; --i){
-				if(canMove(map,(int)x-i,(int)y)){
-					x = x-i;
-					moving = true;
-					break;
+		// Move only if player is not frozen
+		if(punishment != PowerBox.POWER_TYPE_FREEZE){
+			// Move left
+			if(keys[cs[0]]){
+				dir = false;
+				for(int i = MOVESPEED; i > 0; --i){
+					if(canMove(map,(int)x-i,(int)y)){
+						x = x-i;
+						moving = true;
+						break;
+					}
 				}
 			}
-		}
-		// Move right
-		if(keys[cs[1]]){
-			dir = true;
-			for(int i = MOVESPEED; i > 0; --i){
-				if(canMove(map,(int)x+i,(int)y)){
-					x = x+i;
-					moving = true;
-					break;
+			// Move right
+			if(keys[cs[1]]){
+				dir = true;
+				for(int i = MOVESPEED; i > 0; --i){
+					if(canMove(map,(int)x+i,(int)y)){
+						x = x+i;
+						moving = true;
+						break;
+					}
 				}
 			}
 		}
 
 		// Check if action button is pressed
 		if(keys[cs[3]]){
-			if(currentPower != null){
-				currentPower.reset();
-				currentPower = null;
+			if(power != null){
+				returnCode = power.type;
+				power.reset();
+				power = null;
 			}
 		}
 
 		// Increment walk cycle counter
-		walkFrame += 0.25f;
-		if(walkFrame >= 4)
-			walkFrame = 0.f;
+		if(moving){
+			walkFrame += 0.25f;
+			if(walkFrame >= 4)
+				walkFrame = 0.f;
+		}
+
+		// Count down punishment timer
+		if(punishment > 0){
+			punishmentTime--;
+			if(punishmentTime <= 0){
+				punishment = 0;
+			}
+		}
+
+		return returnCode;
 	}
 
 	public void handleCollision(Entity e){
@@ -131,13 +157,28 @@ public class Player extends Entity {
 			yspeed = jp.power;
 		}
 		else if(e instanceof Lava){
-			yspeed = 0;
+			// Respawn called from Game
 		}
 		else if(e instanceof PowerBox){
-			if(currentPower == null){
-				currentPower = (PowerBox)e;
+			if(power == null){
+				power = (PowerBox)e;
 			}
 		}
+	}
+	
+	public void punish(int pType){
+		punishment = pType;
+		punishmentTime = 100;
+	}
+
+	public void respawn(Spawn sp){
+		setPos(sp);
+		yspeed = 0;
+		if(power != null){
+			power.reset();
+			power = null;
+		}
+		punishment = punishmentTime = 0;
 	}
 
 	public boolean canMove(int[][] map, int cx, int cy){
@@ -160,10 +201,10 @@ public class Player extends Entity {
 		int srcx = 0;
 		// On ground
 		if(yspeed == 0){
-			// standing still = do nothing = 0
 			if(moving){
 				srcx = (int)walkFrame*16+16;
 			}
+			// standing still = do nothing = 0
 		}
 		// jumping
 		//else if(yspeed < 0)
@@ -176,8 +217,19 @@ public class Player extends Entity {
 			g.drawImage(skins, (int)x-3,(int)y,(int)x+13,(int)y+16, srcx+16,skin*16,srcx,(skin+1)*16, null);
 	}
 
-	public void setPos(int x, int y){
+	private void setPos(int x, int y){
 		this.x = x;
 		this.y = y;
 	}
+
+	private void setPos(Spawn sp){
+		this.x = sp.x;
+		this.y = sp.y;
+	}
+
+	public static final int RETURN_NONE        = 0;
+	public static final int RETURN_USED_VVVVVV = 1;
+	public static final int RETURN_USED_FREEZE = 2;
+	// next couple of ints should be reserved for powers
+	public static final int RETURN_DIED        = 666;
 }
