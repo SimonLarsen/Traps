@@ -170,8 +170,17 @@ public class Player extends Entity {
 	}
 	
 	public void punish(int pType){
-		punishment = pType;
-		punishmentTime = PowerBox.POWER_TIMES[pType];
+		if(pType == PowerBox.TYPE_SWITCH){
+			float p1x = Game.p1.x;
+			float p1y = Game.p1.y;
+			Game.p1.setPos(Game.p2.x,Game.p2.y);
+			Game.p1.yspeed = Game.p2.yspeed = 0.f;
+			Game.p2.setPos(p1x,p1y);
+		}
+		else{
+			punishment = pType;
+			punishmentTime = PowerBox.POWER_TIMES[pType];
+		}
 	}
 
 	public void respawn(Spawn sp){
@@ -220,12 +229,12 @@ public class Player extends Entity {
 			g.drawImage(skins, (int)x-3,(int)y,(int)x+13,(int)y+16, srcx+16,skin*16,srcx,(skin+1)*16, null);
 	}
 
-	private void setPos(int x, int y){
+	public void setPos(float x, float y){
 		this.x = x;
 		this.y = y;
 	}
 
-	private void setPos(Spawn sp){
+	public void setPos(Spawn sp){
 		this.x = sp.x;
 		this.y = sp.y;
 	}
