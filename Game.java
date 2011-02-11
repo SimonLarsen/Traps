@@ -10,8 +10,8 @@ import java.util.Iterator;
 import java.util.Random;
 
 /*
-	TODO: Walking animation
-	TODO: Pretty much everything
+	TODO: Perhabs make Game singleton for better global access?
+			Is this bad practice?
 */
 
 public class Game extends Applet implements Runnable, KeyListener {
@@ -36,7 +36,7 @@ public class Game extends Applet implements Runnable, KeyListener {
 	private BufferedImage imgTiles, imgSkins, imgEntities, imgParticles;
 	private int[][] map;
 	private boolean keys[];
-	private Player p1,p2;
+	public static Player p1,p2;
 	private ArrayList<Entity> entities;
 	private ArrayList<Particle> particles;
 	private ArrayList<Spawn> spawns;
@@ -76,14 +76,14 @@ public class Game extends Applet implements Runnable, KeyListener {
 			int p1Status = p1.move(map,keys);
 			int p2Status = p2.move(map,keys);
 			// handle player statuses
-			if(p1Status >= 1 && p1Status <= PowerBox.POWER_TYPES)
+			if(p1Status >= 1 && p1Status <= PowerBox.TYPES)
 				p2.punish(p1Status);
 			else if(p1Status == Player.RETURN_DIED){
 				p1.deaths++;
 				p1.respawn(spawns.get(rand.nextInt(spawns.size())));
 			}
 
-			if(p2Status >= 1 && p2Status <= PowerBox.POWER_TYPES)
+			if(p2Status >= 1 && p2Status <= PowerBox.TYPES)
 				p1.punish(p2Status);
 			else if(p2Status == Player.RETURN_DIED){
 				p2.deaths++;

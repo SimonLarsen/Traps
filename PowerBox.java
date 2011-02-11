@@ -10,7 +10,7 @@ public class PowerBox extends Entity {
 	public PowerBox(int x, int y){
 		super(x+3,y+3,10,9);
 		ownedBy = 0;
-		type = POWER_TYPE_NONE;
+		type = TYPE_NONE;
 	}
 
 	public void update(){
@@ -20,7 +20,7 @@ public class PowerBox extends Entity {
 		if(e instanceof Player){
 			Player p = (Player)e;
 			if(ownedBy == 0 && p.power == null){
-				type = Game.rand.nextInt(POWER_TYPES) + 1;
+				type = Game.rand.nextInt(TYPES) + 1;
 				ownedBy = p.player;
 			}
 		}
@@ -28,7 +28,7 @@ public class PowerBox extends Entity {
 
 	public void reset(){
 		ownedBy = 0;
-		type = POWER_TYPE_NONE;
+		type = TYPE_NONE;
 	}
 
 	public void draw(Graphics g, BufferedImage img){
@@ -40,8 +40,10 @@ public class PowerBox extends Entity {
 		g.drawImage(img, (int)x-3,(int)y-3,(int)x+13,(int)y+13,srcx,srcy,srcx+16,srcy+16, null);	
 	}
 
-	public static final int POWER_TYPES = 2;
-	public static final int POWER_TYPE_NONE   = 0;
-	public static final int POWER_TYPE_VVVVVV = 1;
-	public static final int POWER_TYPE_FREEZE = 2;
+	public static final int[] POWER_TIMES = {0,100,100,200};
+	public static final int TYPES = 3;
+	public static final int TYPE_NONE    = 0;
+	public static final int TYPE_VVVVVV  = 1;
+	public static final int TYPE_FREEZE  = 2;
+	public static final int TYPE_REVERSE = 3;
 }

@@ -45,15 +45,18 @@ public class Player extends Entity {
 	}
 
 	public int move(int[][] map, boolean[] keys){
+		// Reset tmp. stats
 		int returnCode = 0;
-
 		onGround = onCeiling = moving = false;
-		if(punishment == PowerBox.POWER_TYPE_VVVVVV){
+
+		// Check for reversed gravity
+		if(punishment == PowerBox.TYPE_VVVVVV){
 			yspeed -= GRAVITY;
 			moving = false;
 		}
-		else
+		else{
 			yspeed += GRAVITY;
+		}
 
 		// Falling
 		if(yspeed > 0){
@@ -84,7 +87,7 @@ public class Player extends Entity {
 		}
 
 		// Handle jump and double jump
-		if(keys[cs[2]]){
+		if(keys[cs[2]] && punishment != PowerBox.TYPE_FREEZE){
 			if(onGround){
 				yspeed = -JUMPPOWER;
 				djwait = DOUBLEJUMPWAIT;
@@ -98,9 +101,10 @@ public class Player extends Entity {
 		}
 		
 		// Move only if player is not frozen
-		if(punishment != PowerBox.POWER_TYPE_FREEZE){
+		if(punishment != PowerBox.TYPE_FREEZE){
 			// Move left
-			if(keys[cs[0]]){
+			if( (keys[cs[0]] && punishment != PowerBox.TYPE_REVERSE)
+			 || (keys[cs[1]] && punishment == PowerBox.TYPE_REVERSE) ){
 				dir = false;
 				for(int i = MOVESPEED; i > 0; --i){
 					if(canMove(map,(int)x-i,(int)y)){
@@ -111,7 +115,8 @@ public class Player extends Entity {
 				}
 			}
 			// Move right
-			if(keys[cs[1]]){
+			if( (keys[cs[1]] && punishment != PowerBox.TYPE_REVERSE)
+			 || (keys[cs[0]] && punishment == PowerBox.TYPE_REVERSE) ){
 				dir = true;
 				for(int i = MOVESPEED; i > 0; --i){
 					if(canMove(map,(int)x+i,(int)y)){
@@ -124,12 +129,10 @@ public class Player extends Entity {
 		}
 
 		// Check if action button is pressed
-		if(keys[cs[3]]){
-			if(power != null){
-				returnCode = power.type;
-				power.reset();
-				power = null;
-			}
+		if(keys[cs[3]] && power != null){
+			returnCode = power.type;
+			power.reset();
+			power = null;
 		}
 
 		// Increment walk cycle counter
@@ -168,7 +171,7 @@ public class Player extends Entity {
 	
 	public void punish(int pType){
 		punishment = pType;
-		punishmentTime = 100;
+		punishmentTime = PowerBox.POWER_TIMES[pType];
 	}
 
 	public void respawn(Spawn sp){
