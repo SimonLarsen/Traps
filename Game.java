@@ -12,6 +12,8 @@ import java.util.Random;
 /*
 	TODO: Perhabs make Game singleton for better global access?
 			Is this bad practice?
+	TODO: Fix PowerBox ownage problem
+	
 */
 
 public class Game extends Applet implements Runnable, KeyListener {

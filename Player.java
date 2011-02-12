@@ -136,11 +136,9 @@ public class Player extends Entity {
 		}
 
 		// Increment walk cycle counter
-		if(moving){
-			walkFrame += 0.25f;
-			if(walkFrame >= 4)
-				walkFrame = 0.f;
-		}
+		walkFrame += 0.25f;
+		if(walkFrame >= 4)
+			walkFrame = 0.f;
 
 		// Count down punishment timer
 		if(punishment > 0){
@@ -184,7 +182,9 @@ public class Player extends Entity {
 		setPos(sp);
 		yspeed = 0;
 		if(power != null){
-			power.reset();
+			if(power.ownedBy == player){
+				power.reset();
+			}
 			power = null;
 		}
 		punishment = punishmentTime = 0;
@@ -217,22 +217,42 @@ public class Player extends Entity {
 		}
 		// jumping
 		//else if(yspeed < 0)
-		else
+		else{
 			srcx = 16;
+		}
+		if(punishment == PowerBox.TYPE_FREEZE){
+			srcx = 16;
+		}
 		// falling = standing still = 0
 		if(dir) // right
 			g.drawImage(skins, (int)x-3,(int)y,(int)x+13,(int)y+16, srcx,skin*16,srcx+16,(skin+1)*16, null);
 		else    // left
 			g.drawImage(skins, (int)x-3,(int)y,(int)x+13,(int)y+16, srcx+16,skin*16,srcx,(skin+1)*16, null);
+
+		// Draw ice cube if frozen
+		if(punishment == PowerBox.TYPE_FREEZE){
+			int offset = 0;
+			if(punishmentTime < 16){
+				offset = 16 - punishmentTime;
+			}
+			g.drawImage(skins,(int)x-3,(int)y+offset,(int)x+13,(int)y+16, 80,offset,96,16, null); 
+		}
+		// Draw swirly on head if reversed
+		else if(punishment == PowerBox.TYPE_REVERSE){
+			int xstart = 88;
+			if((int)walkFrame < 2)
+				xstart = 80;
+			g.drawImage(skins,(int)x+1,(int)y-8,(int)x+9,(int)y, xstart,16,xstart+8,24, null); 
+		}
 	}
 
 	public void setPos(float x, float y){
-		this.x = x;
+		this.x = x+3;
 		this.y = y;
 	}
 
 	public void setPos(Spawn sp){
-		this.x = sp.x;
+		this.x = sp.x+3;
 		this.y = sp.y;
 	}
 
