@@ -12,7 +12,7 @@ public class Editor extends JFrame {
 	public static final int SCREENWIDTH = Game.MAPWIDTH*CELLW;
 	public static final int SCREENHEIGHT = Game.MAPHEIGHT*CELLW+32;
 	public static final String filename = "map1.map";
-	public static final String[] BLOCK_NAMES = {"Blank", "Solid", "Jumppad", "Lava", "Powerbox", "Spawn"};
+	public static final String[] BLOCK_NAMES = {"Blank", "Solid", "Jumppad", "Lava", "Powerbox", "Spawn","Saw"};
 
 	private BufferedImage dbImage;
 	private Graphics dbg;
@@ -110,6 +110,8 @@ public class Editor extends JFrame {
 							g.drawString("Jump",ix*CELLW,iy*CELLW+20); break;
 						case Map.TYPE_POWERBOX:
 							g.drawString("?",ix*CELLW+15,iy*CELLW+20); break;
+						case Map.TYPE_SAW:
+							g.drawString("Saw",ix*CELLW+5,iy*CELLW+20); break;
 					}
 				}
 			}

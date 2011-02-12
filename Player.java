@@ -159,9 +159,6 @@ public class Player extends Entity {
 			Jumppad jp = (Jumppad)e;
 			yspeed = jp.power;
 		}
-		else if(e instanceof Lava){
-			// Respawn called from Game
-		}
 		else if(e instanceof PowerBox){
 			if(power == null){
 				power = (PowerBox)e;

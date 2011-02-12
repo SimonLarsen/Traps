@@ -82,7 +82,6 @@ public class Game extends Applet implements Runnable, KeyListener {
 				p1.deaths++;
 				p1.respawn(spawns.get(rand.nextInt(spawns.size())));
 			}
-
 			if(p2Status >= 1 && p2Status <= PowerBox.TYPES)
 				p1.punish(p2Status);
 			else if(p2Status == Player.RETURN_DIED){
@@ -99,12 +98,22 @@ public class Game extends Applet implements Runnable, KeyListener {
 						p1.deaths++;
 						p1.respawn(spawns.get(rand.nextInt(spawns.size())));
 					}
+					else if(e instanceof Saw){
+						// TODO: Add blood particle
+						p1.deaths++;
+						p1.respawn(spawns.get(rand.nextInt(spawns.size())));
+					}
 					e.handleCollision(p1);
 					p1.handleCollision(e);
 				}
 				if(Solid.collides(p2,e)){
 					if(e instanceof Lava){
 						particles.add(new BurntCorpse((int)p2.x-3,(int)p2.y,p2.dir));
+						p2.deaths++;
+						p2.respawn(spawns.get(rand.nextInt(spawns.size())));
+					}
+					else if(e instanceof Saw){
+						// TODO: Add blood particle
 						p2.deaths++;
 						p2.respawn(spawns.get(rand.nextInt(spawns.size())));
 					}
@@ -201,6 +210,12 @@ public class Game extends Applet implements Runnable, KeyListener {
 								}
 								entities.add(new Lava(ix*CELLWIDTH, iy*CELLWIDTH, cx));
 								ix = ix+cx-1; break;
+						case Map.TYPE_SAW: int cx2 = 0;
+								while(map[ix+cx2][iy] == Map.TYPE_SAW && ix-cx2 < MAPWIDTH){
+									map[ix+cx2][iy] = Map.TYPE_BLANK; cx2++;
+								}
+								entities.add(new Saw(ix*CELLWIDTH, iy*CELLWIDTH, cx2));
+								ix = ix+cx2-1; break;
 						case Map.TYPE_POWERBOX: entities.add(new PowerBox(ix*CELLWIDTH,iy*CELLWIDTH));
 							 map[ix][iy] = Map.TYPE_BLANK; break;
 					}

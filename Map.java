@@ -5,6 +5,7 @@ public class Map {
 	public static final int TYPE_LAVA     = 3;
 	public static final int TYPE_POWERBOX = 4;
 	public static final int TYPE_SPAWN    = 5;
+	public static final int TYPE_SAW      = 6;
 
-	public static final int BLOCK_TYPES   = 6;
+	public static final int BLOCK_TYPES   = 7;
 }
