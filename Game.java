@@ -99,11 +99,13 @@ public class Game extends Applet implements Runnable, KeyListener {
 						particles.add(new BurntCorpse((int)p1.x-3,(int)p1.y,p1.dir));
 						p1.deaths++;
 						p1.respawn(spawns.get(rand.nextInt(spawns.size())));
+						particles.add(new SpawnEffect(p1));
 					}
 					else if(e instanceof Saw){
 						// TODO: Add blood particle
 						p1.deaths++;
 						p1.respawn(spawns.get(rand.nextInt(spawns.size())));
+						particles.add(new SpawnEffect(p1));
 					}
 					e.handleCollision(p1);
 					p1.handleCollision(e);
@@ -113,11 +115,13 @@ public class Game extends Applet implements Runnable, KeyListener {
 						particles.add(new BurntCorpse((int)p2.x-3,(int)p2.y,p2.dir));
 						p2.deaths++;
 						p2.respawn(spawns.get(rand.nextInt(spawns.size())));
+						particles.add(new SpawnEffect(p2));
 					}
 					else if(e instanceof Saw){
 						// TODO: Add blood particle
 						p2.deaths++;
 						p2.respawn(spawns.get(rand.nextInt(spawns.size())));
+						particles.add(new SpawnEffect(p2));
 					}
 					e.handleCollision(p2);
 					p2.handleCollision(e);
@@ -143,6 +147,9 @@ public class Game extends Applet implements Runnable, KeyListener {
 			for(int i = 0; i < entities.size(); ++i){
 				entities.get(i).draw(g,imgEntities);
 			}
+			// Draw players
+			p1.draw(g,imgSkins);
+			p2.draw(g,imgSkins);
 			// Update and draw particles
 			Iterator<Particle> iter = particles.iterator();
 			while(iter.hasNext()){
@@ -154,9 +161,6 @@ public class Game extends Applet implements Runnable, KeyListener {
 					p.draw(g,imgParticles);
 				}
 			}
-			// Draw players
-			p1.draw(g,imgSkins);
-			p2.draw(g,imgSkins);
 			//Debug info
 			if(DEBUG_INFO)
 				drawDebugInfo(g);
