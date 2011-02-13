@@ -168,9 +168,9 @@ public class Player extends Entity {
 		if(pType == PowerBox.TYPE_SWITCH){
 			float p1x = Game.p1.x;
 			float p1y = Game.p1.y;
-			Game.p1.setPos(Game.p2.x,Game.p2.y);
+			Game.p1.setPos(Game.p2.x-3,Game.p2.y);
 			Game.p1.yspeed = Game.p2.yspeed = 0.f;
-			Game.p2.setPos(p1x,p1y);
+			Game.p2.setPos(p1x-3,p1y);
 		}
 		else{
 			punishment = pType;

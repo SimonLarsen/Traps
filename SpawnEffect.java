@@ -18,7 +18,7 @@ public class SpawnEffect extends Particle {
 
 	public void update(){
 		step++;
-		if(step > 16)
+		if(step > 8)
 			alive = false;
 	}
 
@@ -27,7 +27,10 @@ public class SpawnEffect extends Particle {
 			g.setColor(java.awt.Color.red);
 		else
 			g.setColor(java.awt.Color.blue);
-		int hstep = step/2;
-		g.drawOval(x+8-hstep,y+8-hstep,step,step);
+
+		g.fillRect(x+7-step,y+7+step,2,2);
+		g.fillRect(x+7-step,y+7-step,2,2);
+		g.fillRect(x+7+step,y+7+step,2,2);
+		g.fillRect(x+7+step,y+7-step,2,2);
 	}
 }

@@ -13,7 +13,6 @@ import java.util.Random;
 	TODO: Perhabs make Game singleton for better global access?
 			Is this bad practice?
 	TODO: Fix PowerBox ownage problem
-	
 */
 
 public class Game extends Applet implements Runnable, KeyListener {
@@ -36,7 +35,7 @@ public class Game extends Applet implements Runnable, KeyListener {
 	private Graphics appletg;
 	private BufferedImage dbImage;
 	private BufferedImage imgTiles, imgSkins, imgEntities, imgParticles;
-	private int[][] map;
+	public static int[][] map;
 	private boolean keys[];
 	public static Player p1,p2;
 	private ArrayList<Entity> entities;
@@ -102,8 +101,8 @@ public class Game extends Applet implements Runnable, KeyListener {
 						particles.add(new SpawnEffect(p1));
 					}
 					else if(e instanceof Saw){
-						// TODO: Add blood particle
 						p1.deaths++;
+						particles.add(new Blood((int)p1.x,(int)p1.y));
 						p1.respawn(spawns.get(rand.nextInt(spawns.size())));
 						particles.add(new SpawnEffect(p1));
 					}
@@ -118,8 +117,8 @@ public class Game extends Applet implements Runnable, KeyListener {
 						particles.add(new SpawnEffect(p2));
 					}
 					else if(e instanceof Saw){
-						// TODO: Add blood particle
 						p2.deaths++;
+						particles.add(new Blood((int)p2.x,(int)p2.y));
 						p2.respawn(spawns.get(rand.nextInt(spawns.size())));
 						particles.add(new SpawnEffect(p2));
 					}
