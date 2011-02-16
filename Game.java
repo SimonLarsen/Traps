@@ -27,14 +27,13 @@ public class Game extends Applet implements Runnable, KeyListener {
 	public static final int NUMKEYS = 256; // Size of keystates array
 	public static final int SLEEPTIME = 23;
 
-	public static final boolean DEBUG_INFO = true;
+	public static final boolean DEBUG_INFO = false;
 
 	public static Color SKYCOLOR;
 
 	private Graphics2D g;
 	private Graphics appletg;
 	private BufferedImage dbImage;
-	private BufferedImage imgTiles, imgSkins, imgEntities, imgParticles;
 	public static int[][] map;
 	private boolean keys[];
 	public static Player p1,p2;
@@ -63,11 +62,13 @@ public class Game extends Applet implements Runnable, KeyListener {
 	public void run(){
 		p1skin = 0;
 		p2skin = 2;
-		running = true;
 		loadLevelFromFile("map1.map");
-		loadResources();
+		RM.getInstance().loadSFX();
+		RM.getInstance().loadGFX();
+		SKYCOLOR = new Color(124,176,195);
 		p1 = new Player(spawns.get(rand.nextInt(spawns.size())),1,p1skin);
 		p2 = new Player(spawns.get(rand.nextInt(spawns.size())),2,p2skin);
+		running = true;
 		while(running){
 			time = System.currentTimeMillis();
 			/*
@@ -95,14 +96,16 @@ public class Game extends Applet implements Runnable, KeyListener {
 				Entity e = entities.get(i);
 				if(Solid.collides(p1,e)){
 					if(e instanceof Lava){
+						RM.getInstance().auBurn.play();
 						particles.add(new BurntCorpse((int)p1.x-3,(int)p1.y,p1.dir));
 						p1.deaths++;
 						p1.respawn(spawns.get(rand.nextInt(spawns.size())));
 						particles.add(new SpawnEffect(p1));
 					}
 					else if(e instanceof Saw){
+						RM.getInstance().auSaw.play();
 						p1.deaths++;
-						particles.add(new Blood((int)p1.x,(int)p1.y));
+						particles.add(new Blood((int)p1.x+8,(int)p1.y));
 						p1.respawn(spawns.get(rand.nextInt(spawns.size())));
 						particles.add(new SpawnEffect(p1));
 					}
@@ -111,14 +114,16 @@ public class Game extends Applet implements Runnable, KeyListener {
 				}
 				if(Solid.collides(p2,e)){
 					if(e instanceof Lava){
+						RM.getInstance().auBurn.play();
 						particles.add(new BurntCorpse((int)p2.x-3,(int)p2.y,p2.dir));
 						p2.deaths++;
 						p2.respawn(spawns.get(rand.nextInt(spawns.size())));
 						particles.add(new SpawnEffect(p2));
 					}
 					else if(e instanceof Saw){
+						RM.getInstance().auSaw.play();
 						p2.deaths++;
-						particles.add(new Blood((int)p2.x,(int)p2.y));
+						particles.add(new Blood((int)p2.x+8,(int)p2.y));
 						p2.respawn(spawns.get(rand.nextInt(spawns.size())));
 						particles.add(new SpawnEffect(p2));
 					}
@@ -138,17 +143,17 @@ public class Game extends Applet implements Runnable, KeyListener {
 				for(int ix = 0; ix < MAPWIDTH; ++ix){
 					// Normal block
 					if(map[ix][iy] == 1){
-						g.drawImage(imgTiles, ix*CELLWIDTH, iy*CELLWIDTH, CELLWIDTH, CELLWIDTH, null);
+						g.drawImage(RM.getInstance().imgTiles, ix*CELLWIDTH, iy*CELLWIDTH, CELLWIDTH, CELLWIDTH, null);
 					}
 				}
 			}
 			// Draw entites
 			for(int i = 0; i < entities.size(); ++i){
-				entities.get(i).draw(g,imgEntities);
+				entities.get(i).draw(g);
 			}
 			// Draw players
-			p1.draw(g,imgSkins);
-			p2.draw(g,imgSkins);
+			p1.draw(g);
+			p2.draw(g);
 			// Update and draw particles
 			Iterator<Particle> iter = particles.iterator();
 			while(iter.hasNext()){
@@ -157,7 +162,7 @@ public class Game extends Applet implements Runnable, KeyListener {
 					iter.remove();
 				else{
 					p.update();
-					p.draw(g,imgParticles);
+					p.draw(g);
 				}
 			}
 			//Debug info
@@ -173,19 +178,6 @@ public class Game extends Applet implements Runnable, KeyListener {
 				} catch (Exception e) {}
 			}
 		}
-	}
-
-	public boolean loadResources(){
-		SKYCOLOR = new Color(124,176,195);
-		try{
-			imgTiles = ImageIO.read(getClass().getResource("gfx/tiles.png"));
-			imgSkins = ImageIO.read(getClass().getResource("gfx/skins.png"));
-			imgEntities = ImageIO.read(getClass().getResource("gfx/entities.png"));
-			imgParticles = ImageIO.read(getClass().getResource("gfx/particles.png"));
-		} catch (IOException ioe){
-			return false;
-		}
-		return true;
 	}
 
 	public void loadLevelFromFile(String filename){

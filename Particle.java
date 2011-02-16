@@ -13,6 +13,6 @@ public class Particle {
 	public void update(){
 	}
 
-	public void draw(Graphics g, BufferedImage img){
+	public void draw(Graphics g){
 	}
 }

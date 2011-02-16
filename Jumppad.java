@@ -23,10 +23,10 @@ public class Jumppad extends Entity {
 			down = DOWNTIME;
 	}
 
-	public void draw(Graphics g, BufferedImage traps){
+	public void draw(Graphics g){
 		if(down > 0)
-			g.drawImage(traps,(int)x-1,(int)y-9,(int)x+15,(int)y+7,16,0,32,16,null);
+			g.drawImage(RM.getInstance().imgEntities,(int)x-1,(int)y-9,(int)x+15,(int)y+7,16,0,32,16,null);
 		else
-			g.drawImage(traps,(int)x-1,(int)y-9,(int)x+15,(int)y+7,0,0,16,16,null);
+			g.drawImage(RM.getInstance().imgEntities,(int)x-1,(int)y-9,(int)x+15,(int)y+7,0,0,16,16,null);
 	}
 }

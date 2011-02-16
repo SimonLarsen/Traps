@@ -22,7 +22,7 @@ public class SpawnEffect extends Particle {
 			alive = false;
 	}
 
-	public void draw(Graphics g, BufferedImage img){
+	public void draw(Graphics g){
 		if(player == 1)
 			g.setColor(java.awt.Color.red);
 		else

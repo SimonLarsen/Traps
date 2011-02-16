@@ -31,13 +31,13 @@ public class PowerBox extends Entity {
 		type = TYPE_NONE;
 	}
 
-	public void draw(Graphics g, BufferedImage img){
+	public void draw(Graphics g){
 		int srcx = type*16;
 		int srcy = 32;
 		if(type > 0 && ownedBy == 2){
 			srcy += 16;
 		}
-		g.drawImage(img, (int)x-3,(int)y-3,(int)x+13,(int)y+13,srcx,srcy,srcx+16,srcy+16, null);	
+		g.drawImage(RM.getInstance().imgEntities, (int)x-3,(int)y-3,(int)x+13,(int)y+13,srcx,srcy,srcx+16,srcy+16, null);	
 	}
 
 	public static final int[] POWER_TIMES = {0,100,100,200,0};

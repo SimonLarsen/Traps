@@ -18,6 +18,6 @@ public class Entity extends Solid {
 	public void handleCollision(Entity e){
 	}
 
-	public void draw(Graphics g, BufferedImage img){
+	public void draw(Graphics g){
 	}
 }

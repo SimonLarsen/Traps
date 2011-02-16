@@ -17,12 +17,12 @@ public class BurntCorpse extends Particle {
 			alive = false;
 	}
 
-	public void draw(Graphics g, BufferedImage img){
+	public void draw(Graphics g){
 		int offset = step/4;
 		int xoff = Math.round((float)Math.random());
 		if(dir == false) // left
-			g.drawImage(img,(int)x+xoff,(int)y+offset,(int)x+16+xoff,(int)y+16,16,0,0,16-offset,null);
+			g.drawImage(RM.getInstance().imgParticles,(int)x+xoff,(int)y+offset,(int)x+16+xoff,(int)y+16,16,0,0,16-offset,null);
 		else // right
-			g.drawImage(img,(int)x+xoff,(int)y+offset,(int)x+16+xoff,(int)y+16,0,0,16,16-offset,null);
+			g.drawImage(RM.getInstance().imgParticles,(int)x+xoff,(int)y+offset,(int)x+16+xoff,(int)y+16,0,0,16,16-offset,null);
 	}
 }

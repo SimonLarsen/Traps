@@ -11,16 +11,16 @@ public class Lava extends Entity {
 
 	}
 
-	public void draw(Graphics g, BufferedImage tex){
+	public void draw(Graphics g){
 		int stop = 0;
 		while(stop < w){
 			if(stop+64 >= w){
 				int diff = w - stop;
-				g.drawImage(tex,(int)x+stop,(int)y,(int)x+stop+diff,(int)y+12,0,20,diff,32,null);
+				g.drawImage(RM.getInstance().imgEntities,(int)x+stop,(int)y,(int)x+stop+diff,(int)y+12,0,20,diff,32,null);
 				stop += diff;
 			}
 			else{
-				g.drawImage(tex,(int)x+stop,(int)y,(int)x+stop+64,(int)y+12,0,20,64,32,null);
+				g.drawImage(RM.getInstance().imgEntities,(int)x+stop,(int)y,(int)x+stop+64,(int)y+12,0,20,64,32,null);
 				stop += 64;
 			}
 		}
