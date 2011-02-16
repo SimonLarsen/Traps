@@ -156,6 +156,7 @@ public class Player extends Entity {
 		if(e instanceof Jumppad){
 			Jumppad jp = (Jumppad)e;
 			yspeed = jp.power;
+			RM.getInstance().auJump.play();
 		}
 		else if(e instanceof PowerBox){
 			if(power == null){
