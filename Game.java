@@ -41,7 +41,7 @@ public class Game extends Applet implements Runnable, KeyListener {
 	private ArrayList<Particle> particles;
 	private ArrayList<Spawn> spawns;
 	public static Random rand;
-	private int p1skin, p2skin;
+	private int p1skin, p2skin, tileset;
 	private boolean running;
 	private long time;
 
@@ -62,9 +62,12 @@ public class Game extends Applet implements Runnable, KeyListener {
 	public void run(){
 		p1skin = 0;
 		p2skin = 2;
+		tileset = 2;
 		loadLevelFromFile("map1.map");
 		RM.getInstance().loadSFX();
 		RM.getInstance().loadGFX();
+		//RM.getInstance().loadBGM();
+		//RM.getInstance().bgm1.loop();
 		SKYCOLOR = new Color(124,176,195);
 		p1 = new Player(spawns.get(rand.nextInt(spawns.size())),1,p1skin);
 		p2 = new Player(spawns.get(rand.nextInt(spawns.size())),2,p2skin);
@@ -141,9 +144,15 @@ public class Game extends Applet implements Runnable, KeyListener {
 			// Draw tiles
 			for(int iy = 0; iy < MAPHEIGHT; ++iy){
 				for(int ix = 0; ix < MAPWIDTH; ++ix){
-					// Normal block
+					// Platform block
 					if(map[ix][iy] == 1){
-						g.drawImage(RM.getInstance().imgTiles, ix*CELLWIDTH, iy*CELLWIDTH, CELLWIDTH, CELLWIDTH, null);
+						g.drawImage(RM.getInstance().imgTiles, ix*CELLWIDTH, iy*CELLWIDTH, (ix+1)*CELLWIDTH, (iy+1)*CELLWIDTH,
+									0,tileset*CELLWIDTH,16,(tileset+1)*CELLWIDTH, null);
+					}
+					// Wall block
+					else if(map[ix][iy] == 2){
+						g.drawImage(RM.getInstance().imgTiles, ix*CELLWIDTH, iy*CELLWIDTH, (ix+1)*CELLWIDTH, (iy+1)*CELLWIDTH,
+									16,tileset*CELLWIDTH,32,(tileset+1)*CELLWIDTH, null);
 					}
 				}
 			}

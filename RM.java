@@ -6,6 +6,7 @@ import javax.imageio.ImageIO;
 public class RM {
 	private static final RM INSTANCE = new RM();
 	public static AudioClip auBurn, auSaw, auPower, auJump;
+	public static AudioClip bgm1;
 	public static BufferedImage imgTiles, imgSkins, imgEntities, imgParticles;
 
 	private RM() {}
@@ -31,6 +32,11 @@ public class RM {
 		auSaw = Applet.newAudioClip(Game.class.getResource("sfx/saw.wav"));
 		auPower = Applet.newAudioClip(Game.class.getResource("sfx/power.wav"));
 		auJump = Applet.newAudioClip(Game.class.getResource("sfx/jump.wav"));
+		return true;
+	}
+
+	public boolean loadBGM(){
+		bgm1 = Applet.newAudioClip(Game.class.getResource("sfx/bgm1.wav"));
 		return true;
 	}
 }

@@ -203,7 +203,7 @@ public class Player extends Entity {
 		if(x1 >= Game.MAPWIDTH || x2 >= Game.MAPWIDTH || y1 >= Game.MAPHEIGHT || y2 >= Game.MAPHEIGHT)
 			return false;
 
-		if(map[x1][y1] == 1 || map[x2][y1] == 1 || map[x1][y2] == 1 || map[x2][y2] == 1)
+		if(map[x1][y1] > 0 || map[x2][y1] > 0 || map[x1][y2] > 0 || map[x2][y2] > 0)
 			return false;
 		return true;
 	}

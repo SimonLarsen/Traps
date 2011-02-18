@@ -12,7 +12,7 @@ public class Editor extends JFrame {
 	public static final int SCREENWIDTH = Game.MAPWIDTH*CELLW;
 	public static final int SCREENHEIGHT = Game.MAPHEIGHT*CELLW+32;
 	public static final String filename = "map1.map";
-	public static final String[] BLOCK_NAMES = {"Blank", "Solid", "Jumppad", "Lava", "Powerbox", "Spawn","Saw"};
+	public static final String[] BLOCK_NAMES = {"Blank", "Platform", "Wall", "Jumppad", "Lava", "Powerbox", "Spawn","Saw"};
 
 	private BufferedImage dbImage;
 	private Graphics dbg;
@@ -93,7 +93,8 @@ public class Editor extends JFrame {
 				for(int ix = 0; ix < Game.MAPWIDTH; ++ix){
 					switch(map[ix][iy]){
 						case Map.TYPE_BLANK:    g.setColor(Color.white);  break;
-						case Map.TYPE_SOLID:    g.setColor(Color.black);  break;
+						case Map.TYPE_SOLID:    g.setColor(Color.gray);   break;
+						case Map.TYPE_SOLID2:   g.setColor(Color.black);  break;
 						case Map.TYPE_JUMPPAD:  g.setColor(Color.red);    break;
 						case Map.TYPE_LAVA:     g.setColor(Color.orange); break;
 						case Map.TYPE_POWERBOX: g.setColor(Color.yellow); break;
@@ -134,8 +135,8 @@ public class Editor extends JFrame {
 				map[ix][Game.MAPHEIGHT-1] = Map.TYPE_SOLID;
 			}
 			for (int iy = 0; iy < Game.MAPHEIGHT; ++iy){
-				map[0][iy] = Map.TYPE_SOLID;
-				map[Game.MAPWIDTH-1][iy] = Map.TYPE_SOLID;
+				map[0][iy] = Map.TYPE_SOLID2;
+				map[Game.MAPWIDTH-1][iy] = Map.TYPE_SOLID2;
 			}
 		}
 
