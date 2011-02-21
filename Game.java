@@ -8,11 +8,10 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Random;
+import java.util.Scanner;
 
 /*
-	TODO: Perhabs make Game singleton for better global access?
-			Is this bad practice?
-	TODO: Fix PowerBox ownage problem
+	TODO: Fix PowerBox ownage problem :(
 */
 
 public class Game extends Applet implements Runnable, KeyListener {
@@ -62,8 +61,8 @@ public class Game extends Applet implements Runnable, KeyListener {
 	public void run(){
 		p1skin = 0;
 		p2skin = 2;
-		tileset = 2;
-		loadLevelFromFile("map1.map");
+		tileset = 1;
+		loadLevelFromASCII("map1.txt");
 		RM.getInstance().loadSFX();
 		RM.getInstance().loadGFX();
 		//RM.getInstance().loadBGM();
@@ -144,15 +143,20 @@ public class Game extends Applet implements Runnable, KeyListener {
 			// Draw tiles
 			for(int iy = 0; iy < MAPHEIGHT; ++iy){
 				for(int ix = 0; ix < MAPWIDTH; ++ix){
-					// Platform block
-					if(map[ix][iy] == 1){
+					// Platform
+					if(map[ix][iy] == Map.TYPE_PLATFORM){
 						g.drawImage(RM.getInstance().imgTiles, ix*CELLWIDTH, iy*CELLWIDTH, (ix+1)*CELLWIDTH, (iy+1)*CELLWIDTH,
 									0,tileset*CELLWIDTH,16,(tileset+1)*CELLWIDTH, null);
 					}
-					// Wall block
-					else if(map[ix][iy] == 2){
+					// Block
+					else if(map[ix][iy] == Map.TYPE_BLOCK){
 						g.drawImage(RM.getInstance().imgTiles, ix*CELLWIDTH, iy*CELLWIDTH, (ix+1)*CELLWIDTH, (iy+1)*CELLWIDTH,
 									16,tileset*CELLWIDTH,32,(tileset+1)*CELLWIDTH, null);
+					}
+					// Wall
+					else if(map[ix][iy] == Map.TYPE_WALL){
+						g.drawImage(RM.getInstance().imgTiles, ix*CELLWIDTH, iy*CELLWIDTH, (ix+1)*CELLWIDTH, (iy+1)*CELLWIDTH,
+									32,tileset*CELLWIDTH,48,(tileset+1)*CELLWIDTH, null);
 					}
 				}
 			}
@@ -189,6 +193,54 @@ public class Game extends Applet implements Runnable, KeyListener {
 		}
 	}
 
+	public void loadLevelFromASCII(String filename){
+		map = new int[MAPWIDTH][MAPHEIGHT];
+		try{
+			File file = new File(filename);
+			Scanner scan = new Scanner(file);
+			int iy = 0;
+			while(iy < MAPHEIGHT && scan.hasNextLine()){
+				String line = scan.nextLine();
+				int ix = 0;
+				while(ix < MAPWIDTH && ix < line.length()){
+					char c = line.charAt(ix);
+					switch(c){
+						case '|': map[ix][iy] = Map.TYPE_WALL; break;
+						case '#': map[ix][iy] = Map.TYPE_BLOCK; break;
+						case '=': map[ix][iy] = Map.TYPE_PLATFORM; break;
+						case 'x':
+						case 'X': entities.add(new Jumppad(ix*CELLWIDTH,iy*CELLWIDTH,Jumppad.POWER));
+							 map[ix][iy] = Map.TYPE_BLANK; break;
+						case 's':
+						case 'S': spawns.add(new Spawn(ix*CELLWIDTH,iy*CELLWIDTH));
+							 map[ix][iy] = Map.TYPE_BLANK; break;
+						case '~': int cx = 0;
+							while(line.charAt(ix+cx) == '~' && ix+cx < MAPWIDTH && ix+cx < line.length()){
+								map[ix+cx][iy] = Map.TYPE_BLANK; cx++;
+							}
+							entities.add(new Lava(ix*CELLWIDTH, iy*CELLWIDTH, cx));
+							ix = ix+cx-1; break;
+						case '*': int cx2 = 0;
+							while(line.charAt(ix+cx2) == '*' && ix+cx2 < MAPWIDTH && ix-cx2 < line.length()){
+								map[ix+cx2][iy] = Map.TYPE_BLANK; cx2++;
+							}
+							entities.add(new Saw(ix*CELLWIDTH, iy*CELLWIDTH, cx2));
+							ix = ix+cx2-1; break;
+						case '?': entities.add(new PowerBox(ix*CELLWIDTH,iy*CELLWIDTH));
+							 map[ix][iy] = Map.TYPE_BLANK; break;
+						default: map[ix][iy] = Map.TYPE_BLANK; break;
+					}
+					++ix;
+				}
+				++iy;
+			}
+		} catch (FileNotFoundException fnfe) {
+			System.out.println("File not found");
+		}
+	}
+
+	/*
+	    REMOVED FOR NOW
 	public void loadLevelFromFile(String filename){
 		try{
 			//FileInputStream fileIn = new FileInputStream(filename);
@@ -217,7 +269,7 @@ public class Game extends Applet implements Runnable, KeyListener {
 								entities.add(new Lava(ix*CELLWIDTH, iy*CELLWIDTH, cx));
 								ix = ix+cx-1; break;
 						case Map.TYPE_SAW: int cx2 = 0;
-								while(map[ix+cx2][iy] == Map.TYPE_SAW && ix-cx2 < MAPWIDTH){
+								while(map[ix+cx2][iy] == Map.TYPE_SAW && ix+cx2 < MAPWIDTH){
 									map[ix+cx2][iy] = Map.TYPE_BLANK; cx2++;
 								}
 								entities.add(new Saw(ix*CELLWIDTH, iy*CELLWIDTH, cx2));
@@ -229,6 +281,7 @@ public class Game extends Applet implements Runnable, KeyListener {
 			}
 		}
 	}
+	*/
 
 	public void drawDebugInfo(Graphics g){
 		g.setColor(Color.black);
