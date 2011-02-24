@@ -40,6 +40,7 @@ public class Game extends Applet implements Runnable, KeyListener {
 	private ArrayList<Particle> particles;
 	private ArrayList<Spawn> spawns;
 	public static Random rand;
+	public static int start_lives;
 	private int p1skin, p2skin, tileset;
 	private boolean running;
 	private long time;
@@ -60,8 +61,9 @@ public class Game extends Applet implements Runnable, KeyListener {
 
 	public void run(){
 		p1skin = 0;
-		p2skin = 2;
+		p2skin = 3;
 		tileset = 1;
+		start_lives = 100;
 		loadLevelFromASCII("map1.txt");
 		RM.getInstance().loadSFX();
 		RM.getInstance().loadGFX();
@@ -71,7 +73,7 @@ public class Game extends Applet implements Runnable, KeyListener {
 		p1 = new Player(spawns.get(rand.nextInt(spawns.size())),1,p1skin);
 		p2 = new Player(spawns.get(rand.nextInt(spawns.size())),2,p2skin);
 		running = true;
-		while(running){
+		while(p1.lives > 0 && p2.lives > 0){
 			time = System.currentTimeMillis();
 			/*
 				Game logic
@@ -83,12 +85,12 @@ public class Game extends Applet implements Runnable, KeyListener {
 			if(p1Status >= 1 && p1Status <= PowerBox.TYPES)
 				p2.punish(p1Status);
 			else if(p1Status == Player.RETURN_DIED){
-				p1.deaths++;
+				p1.lives--;
 				p1.respawn(spawns.get(rand.nextInt(spawns.size())));
 			}
 			else if(p1Status == Player.RETURN_BOMBED){
 				RM.getInstance().auExplosion.play();
-				p1.deaths++;
+				p1.lives--;
 				particles.add(new BloodExplosion((int)p1.x+6,(int)p1.y+4));
 				p1.respawn(spawns.get(rand.nextInt(spawns.size())));
 			}
@@ -96,12 +98,12 @@ public class Game extends Applet implements Runnable, KeyListener {
 			if(p2Status >= 1 && p2Status <= PowerBox.TYPES)
 				p1.punish(p2Status);
 			else if(p2Status == Player.RETURN_DIED){
-				p2.deaths++;
+				p2.lives--;
 				p2.respawn(spawns.get(rand.nextInt(spawns.size())));
 			}
 			else if(p2Status == Player.RETURN_BOMBED){
 				RM.getInstance().auExplosion.play();
-				p2.deaths++;
+				p2.lives--;
 				particles.add(new BloodExplosion((int)p2.x+6,(int)p2.y+4));
 				p2.respawn(spawns.get(rand.nextInt(spawns.size())));
 			}
@@ -113,13 +115,13 @@ public class Game extends Applet implements Runnable, KeyListener {
 					if(e instanceof Lava){
 						RM.getInstance().auBurn.play();
 						particles.add(new BurntCorpse((int)p1.x-3,(int)p1.y,p1.dir));
-						p1.deaths++;
+						p1.lives--;
 						p1.respawn(spawns.get(rand.nextInt(spawns.size())));
 						particles.add(new SpawnEffect(p1));
 					}
 					else if(e instanceof Saw){
 						RM.getInstance().auSaw.play();
-						p1.deaths++;
+						p1.lives--;
 						particles.add(new Blood((int)p1.x+8,(int)p1.y));
 						p1.respawn(spawns.get(rand.nextInt(spawns.size())));
 						particles.add(new SpawnEffect(p1));
@@ -131,13 +133,13 @@ public class Game extends Applet implements Runnable, KeyListener {
 					if(e instanceof Lava){
 						RM.getInstance().auBurn.play();
 						particles.add(new BurntCorpse((int)p2.x-3,(int)p2.y,p2.dir));
-						p2.deaths++;
+						p2.lives--;
 						p2.respawn(spawns.get(rand.nextInt(spawns.size())));
 						particles.add(new SpawnEffect(p2));
 					}
 					else if(e instanceof Saw){
 						RM.getInstance().auSaw.play();
-						p2.deaths++;
+						p2.lives--;
 						particles.add(new Blood((int)p2.x+8,(int)p2.y));
 						p2.respawn(spawns.get(rand.nextInt(spawns.size())));
 						particles.add(new SpawnEffect(p2));
@@ -307,8 +309,8 @@ public class Game extends Applet implements Runnable, KeyListener {
 		g.drawString("Particles: " + particles.size(),8,32);
 		g.drawString("P1 X: "+(int)p1.x+" Y: "+(int)p1.y,8,48);
 		g.drawString("P2 X: "+(int)p2.x+" Y: "+(int)p2.y,8,64);
-		g.drawString("P1 deaths: "+p1.deaths,8,80);
-		g.drawString("P2 deaths: "+p2.deaths,8,96);
+		g.drawString("P1 lives: "+p1.lives,8,80);
+		g.drawString("P2 lives: "+p2.lives,8,96);
 	}
 
 	public void keyPressed(KeyEvent e) {

@@ -9,7 +9,7 @@ public class Player extends Entity {
 	public static final int DOUBLEJUMPWAIT = 10; // Updates
 
 	private float xspeed, yspeed;
-	public int player, deaths;
+	public int player, lives;
 	private int skin, djwait;
 	private float walkFrame;
 	public boolean dir; // False = left. True = right.
@@ -25,7 +25,7 @@ public class Player extends Entity {
 		this.player = player;	
 		this.skin = skin;
 		this.power = null;
-		this.deaths = 0;
+		this.lives = Game.start_lives;
 
 		this.punishment = this.punishmentTime = 0;
 
