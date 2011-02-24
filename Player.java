@@ -144,6 +144,9 @@ public class Player extends Entity {
 		if(punishment > 0){
 			punishmentTime--;
 			if(punishmentTime <= 0){
+				if(punishment == PowerBox.TYPE_BOMB){
+					returnCode = RETURN_BOMBED;
+				}
 				punishment = 0;
 			}
 		}
@@ -162,6 +165,13 @@ public class Player extends Entity {
 			if(power == null){
 				power = (PowerBox)e;
 				RM.getInstance().auPower.play();
+			}
+		}
+		else if(e instanceof Player){
+			if(punishment == PowerBox.TYPE_BOMB && punishmentTime < PowerBox.POWER_TIMES[PowerBox.TYPE_BOMB]-BOMB_WAIT){
+				Player p = (Player)e;	
+				p.punish(PowerBox.TYPE_BOMB);
+				this.punishment = this.punishmentTime = 0;
 			}
 		}
 	}
@@ -246,6 +256,13 @@ public class Player extends Entity {
 				xstart = 80;
 			g.drawImage(RM.getInstance().imgSkins,(int)x+1,(int)y-8,(int)x+9,(int)y, xstart,16,xstart+8,24, null); 
 		}
+		// Draw bomb if bombed?
+		else if(punishment == PowerBox.TYPE_BOMB){
+			int xstart = 80;
+			if((int)walkFrame < 2)
+				xstart = 88;
+			g.drawImage(RM.getInstance().imgSkins,(int)x+2,(int)y-9,(int)x+10,(int)y-1, xstart,24,xstart+8,32, null);	
+		}
 	}
 
 	public void setPos(float x, float y){
@@ -258,9 +275,10 @@ public class Player extends Entity {
 		this.y = sp.y;
 	}
 
-	public static final int RETURN_NONE        = 0;
-	public static final int RETURN_USED_VVVVVV = 1;
-	public static final int RETURN_USED_FREEZE = 2;
-	// next couple of ints should be reserved for powers
+	/** NOTE: FIRST PowerBox.TYPE ints should be reserved
+	 *  for using powers. Use high values for other purposes!
+	 */
 	public static final int RETURN_DIED        = 666;
+	public static final int RETURN_BOMBED      = 123;
+	public static final int BOMB_WAIT = 30;
 }

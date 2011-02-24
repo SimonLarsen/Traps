@@ -86,10 +86,21 @@ public class Game extends Applet implements Runnable, KeyListener {
 				p1.deaths++;
 				p1.respawn(spawns.get(rand.nextInt(spawns.size())));
 			}
+			else if(p1Status == Player.RETURN_BOMBED){
+				p1.deaths++;
+				particles.add(new BloodExplosion((int)p1.x+8,(int)p1.y+8));
+				p1.respawn(spawns.get(rand.nextInt(spawns.size())));
+			}
+
 			if(p2Status >= 1 && p2Status <= PowerBox.TYPES)
 				p1.punish(p2Status);
 			else if(p2Status == Player.RETURN_DIED){
 				p2.deaths++;
+				p2.respawn(spawns.get(rand.nextInt(spawns.size())));
+			}
+			else if(p2Status == Player.RETURN_BOMBED){
+				p2.deaths++;
+				particles.add(new BloodExplosion((int)p2.x+8,(int)p2.y+8));
 				p2.respawn(spawns.get(rand.nextInt(spawns.size())));
 			}
 
@@ -133,6 +144,11 @@ public class Game extends Applet implements Runnable, KeyListener {
 					p2.handleCollision(e);
 				}
 				e.update();
+			}
+			// Collide players with eachother
+			if(Solid.collides(p1,p2)){
+				p1.handleCollision(p2);
+				p2.handleCollision(p1);
 			}
 
 			/*

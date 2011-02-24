@@ -1,19 +1,19 @@
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
-public class Blood extends Particle {
+public class BloodExplosion extends Particle {
 	private int step;
 	private BloodDrop[] drops;
 
-	public Blood(int x, int y){
+	public BloodExplosion(int x, int y){
 		super(x,y);
 		drops = new BloodDrop[32];
 		for(int i = 0; i < drops.length; ++i){
 			drops[i] = new BloodDrop();
 			drops[i].x = x;
 			drops[i].y = y;
-			drops[i].xspeed = 6.f*((float)Math.random()-0.5f);
-			drops[i].yspeed = -3.0f*(float)Math.random();
+			drops[i].xspeed = 15.f*((float)Math.random()-0.5f);
+			drops[i].yspeed = 15.f*((float)Math.random()-0.5f);
 		}
 		this.step = 0;
 	}
@@ -21,7 +21,6 @@ public class Blood extends Particle {
 	public void update(){
 		for(int i = 0; i < drops.length; ++i){
 			drops[i].x += drops[i].xspeed;
-			//drops[i].yspeed += 0.4f;
 			drops[i].yspeed += 0.5f;
 			drops[i].y += drops[i].yspeed;
 		}
