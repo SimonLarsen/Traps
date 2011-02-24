@@ -87,8 +87,9 @@ public class Game extends Applet implements Runnable, KeyListener {
 				p1.respawn(spawns.get(rand.nextInt(spawns.size())));
 			}
 			else if(p1Status == Player.RETURN_BOMBED){
+				RM.getInstance().auExplosion.play();
 				p1.deaths++;
-				particles.add(new BloodExplosion((int)p1.x+8,(int)p1.y+8));
+				particles.add(new BloodExplosion((int)p1.x+6,(int)p1.y+4));
 				p1.respawn(spawns.get(rand.nextInt(spawns.size())));
 			}
 
@@ -99,8 +100,9 @@ public class Game extends Applet implements Runnable, KeyListener {
 				p2.respawn(spawns.get(rand.nextInt(spawns.size())));
 			}
 			else if(p2Status == Player.RETURN_BOMBED){
+				RM.getInstance().auExplosion.play();
 				p2.deaths++;
-				particles.add(new BloodExplosion((int)p2.x+8,(int)p2.y+8));
+				particles.add(new BloodExplosion((int)p2.x+6,(int)p2.y+4));
 				p2.respawn(spawns.get(rand.nextInt(spawns.size())));
 			}
 
