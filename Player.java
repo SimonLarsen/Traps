@@ -130,6 +130,7 @@ public class Player extends Entity {
 
 		// Check if action button is pressed
 		if(keys[cs[3]] && power != null){
+			keys[cs[3]] = false;
 			returnCode = power.type;
 			power.reset();
 			power = null;
@@ -137,8 +138,9 @@ public class Player extends Entity {
 
 		// Increment walk cycle counter
 		walkFrame += 0.25f;
-		if(walkFrame >= 4)
+		if(walkFrame >= 4){
 			walkFrame = 0.f;
+		}
 
 		// Count down punishment timer
 		if(punishment > 0){
@@ -162,16 +164,20 @@ public class Player extends Entity {
 			RM.getInstance().auJump.play();
 		}
 		else if(e instanceof PowerBox){
+			/*
 			if(power == null){
 				power = (PowerBox)e;
 				RM.getInstance().auPower.play();
 			}
+			*/
 		}
 		else if(e instanceof Player){
 			if(punishment == PowerBox.TYPE_BOMB && punishmentTime < PowerBox.POWER_TIMES[PowerBox.TYPE_BOMB]-BOMB_WAIT){
 				Player p = (Player)e;	
-				p.punish(PowerBox.TYPE_BOMB);
-				this.punishment = this.punishmentTime = 0;
+				if(p.punishment != PowerBox.TYPE_BOMB){
+					p.punish(PowerBox.TYPE_BOMB);
+					this.punishment = this.punishmentTime = 0;
+				}
 			}
 		}
 	}
@@ -194,9 +200,9 @@ public class Player extends Entity {
 		setPos(sp);
 		yspeed = 0;
 		if(power != null){
-			if(power.ownedBy == player){
+			//if(power.ownedBy == player){
 				power.reset();
-			}
+			//}
 			power = null;
 		}
 		punishment = punishmentTime = 0;
@@ -228,7 +234,6 @@ public class Player extends Entity {
 			// standing still = do nothing = 0
 		}
 		// jumping
-		//else if(yspeed < 0)
 		else{
 			srcx = 16;
 		}

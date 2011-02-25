@@ -1,13 +1,16 @@
 import java.applet.Applet;
 import java.applet.AudioClip;
 import java.awt.image.BufferedImage;
+import java.awt.Font;
+import java.io.InputStream;
 import javax.imageio.ImageIO;
 
 public class RM {
 	private static final RM INSTANCE = new RM();
 	public static AudioClip auBurn, auSaw, auPower, auJump, auExplosion;
-	public static AudioClip bgm1;
-	public static BufferedImage imgTiles, imgSkins, imgEntities, imgParticles;
+	public static BufferedImage imgTiles, imgSkins, imgEntities, imgParticles, imgSplash;
+	public static Player bgm1;
+	public static Font baseFont, smallFont, menuFont;
 
 	private RM() {}
 
@@ -21,6 +24,11 @@ public class RM {
 			imgTiles = ImageIO.read(getClass().getResource("gfx/tiles.png"));
 			imgEntities = ImageIO.read(getClass().getResource("gfx/entities.png"));
 			imgParticles = ImageIO.read(getClass().getResource("gfx/particles.png"));
+			imgSplash = ImageIO.read(getClass().getResource("gfx/splash.png"));
+			InputStream is = getClass().getResourceAsStream("gfx/font.ttf");
+			baseFont = Font.createFont(Font.TRUETYPE_FONT, is);
+			smallFont = baseFont.deriveFont(8.f);
+			menuFont = baseFont.deriveFont(16.f);
 		} catch (Exception e) {
 			return false;
 		}
@@ -33,11 +41,6 @@ public class RM {
 		auPower = Applet.newAudioClip(Game.class.getResource("sfx/power.wav"));
 		auJump = Applet.newAudioClip(Game.class.getResource("sfx/jump.wav"));
 		auExplosion = Applet.newAudioClip(Game.class.getResource("sfx/explosion.wav"));
-		return true;
-	}
-
-	public boolean loadBGM(){
-		bgm1 = Applet.newAudioClip(Game.class.getResource("sfx/bgm1.wav"));
 		return true;
 	}
 }

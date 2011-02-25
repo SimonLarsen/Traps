@@ -26,7 +26,7 @@ public class Game extends Applet implements Runnable, KeyListener {
 	public static final int NUMKEYS = 256; // Size of keystates array
 	public static final int SLEEPTIME = 23;
 
-	public static final boolean DEBUG_INFO = false;
+	public static final boolean DEBUG_INFO = true;
 
 	public static Color SKYCOLOR;
 
@@ -41,9 +41,10 @@ public class Game extends Applet implements Runnable, KeyListener {
 	private ArrayList<Spawn> spawns;
 	public static Random rand;
 	public static int start_lives;
-	private int p1skin, p2skin, tileset;
+	private int p1skin, p2skin, tileset, menustate;
 	private boolean running;
 	private long time;
+	private MP3Player player;
 
 	public void start(){
 		dbImage = new BufferedImage(BUFFERWIDTH,BUFFERHEIGHT,BufferedImage.TYPE_INT_RGB);
@@ -55,24 +56,37 @@ public class Game extends Applet implements Runnable, KeyListener {
 		spawns = new ArrayList<Spawn>();
 		addKeyListener(this);
 		rand = new Random();
+		player = new MP3Player();
+
+		RM.getInstance().loadSFX();
+		RM.getInstance().loadGFX();
+		player.play();
+
+		g.setFont(RM.getInstance().smallFont);
+		SKYCOLOR = new Color(124,176,195);
+		p1skin = 1;
+		p2skin = 2;
+		tileset = 1;
+		start_lives = 100;
+		menustate = MAIN_MENU_STATE;
 
 		new Thread(this).start();
 	}
 
 	public void run(){
-		p1skin = 0;
-		p2skin = 3;
-		tileset = 1;
-		start_lives = 100;
-		loadLevelFromASCII("map1.txt");
-		RM.getInstance().loadSFX();
-		RM.getInstance().loadGFX();
-		//RM.getInstance().loadBGM();
-		//RM.getInstance().bgm1.loop();
-		SKYCOLOR = new Color(124,176,195);
+		while(true){
+			switch(menustate){
+				case MAIN_MENU_STATE: showMainMenu(); break;
+				case GAME_STATE: gameLoop(); break;
+			}
+		}
+	}
+
+	public void gameLoop(){
+		loadLevelFromASCII("maps/map1.txt");
 		p1 = new Player(spawns.get(rand.nextInt(spawns.size())),1,p1skin);
 		p2 = new Player(spawns.get(rand.nextInt(spawns.size())),2,p2skin);
-		running = true;
+		// running = true; UNUSED?
 		while(p1.lives > 0 && p2.lives > 0){
 			time = System.currentTimeMillis();
 			/*
@@ -163,20 +177,10 @@ public class Game extends Applet implements Runnable, KeyListener {
 			// Draw tiles
 			for(int iy = 0; iy < MAPHEIGHT; ++iy){
 				for(int ix = 0; ix < MAPWIDTH; ++ix){
-					// Platform
-					if(map[ix][iy] == Map.TYPE_PLATFORM){
+					int cur = map[ix][iy];
+					if(cur >= Map.TYPE_PLATFORM && cur <= Map.TYPE_WALL){
 						g.drawImage(RM.getInstance().imgTiles, ix*CELLWIDTH, iy*CELLWIDTH, (ix+1)*CELLWIDTH, (iy+1)*CELLWIDTH,
-									0,tileset*CELLWIDTH,16,(tileset+1)*CELLWIDTH, null);
-					}
-					// Block
-					else if(map[ix][iy] == Map.TYPE_BLOCK){
-						g.drawImage(RM.getInstance().imgTiles, ix*CELLWIDTH, iy*CELLWIDTH, (ix+1)*CELLWIDTH, (iy+1)*CELLWIDTH,
-									16,tileset*CELLWIDTH,32,(tileset+1)*CELLWIDTH, null);
-					}
-					// Wall
-					else if(map[ix][iy] == Map.TYPE_WALL){
-						g.drawImage(RM.getInstance().imgTiles, ix*CELLWIDTH, iy*CELLWIDTH, (ix+1)*CELLWIDTH, (iy+1)*CELLWIDTH,
-									32,tileset*CELLWIDTH,48,(tileset+1)*CELLWIDTH, null);
+									(cur-1)*16,tileset*CELLWIDTH,cur*16,(tileset+1)*CELLWIDTH, null);
 					}
 				}
 			}
@@ -213,11 +217,44 @@ public class Game extends Applet implements Runnable, KeyListener {
 		}
 	}
 
+	public void showMainMenu(){
+		int selection = 0;
+		while(menustate == MAIN_MENU_STATE){
+
+			if(keys[KeyEvent.VK_DOWN]){
+				selection++;
+				keys[KeyEvent.VK_DOWN] = false;
+			}
+			if(keys[KeyEvent.VK_UP]){
+				selection--;
+				keys[KeyEvent.VK_UP] = false;
+			}
+			if(keys[KeyEvent.VK_ENTER]){
+				if(selection == 0)
+					menustate = GAME_STATE;
+			}
+			if(selection < 0)
+				selection = 2;
+			else if(selection > 2)
+				selection = 0;
+
+			g.drawImage(RM.getInstance().imgSplash, 0, 0, BUFFERWIDTH, BUFFERHEIGHT, null);
+			g.drawImage(RM.getInstance().imgEntities, 48, 92+selection*45, 64, 108+selection*45, 80,0,96,16, null);
+			g.drawImage(RM.getInstance().imgEntities, 256, 92+selection*45, 272, 108+selection*45, 80,0,96,16, null);
+			appletg.drawImage(dbImage, 0, 0, SCREENWIDTH, SCREENHEIGHT, null);
+
+			try{
+				Thread.sleep(20);
+			} catch (Exception e) {}
+		}
+	}
+
 	public void loadLevelFromASCII(String filename){
 		map = new int[MAPWIDTH][MAPHEIGHT];
 		try{
-			File file = new File(filename);
-			Scanner scan = new Scanner(file);
+			//File file = new File(filename);
+			//File file = new File(getClass().getResource(filename));
+			Scanner scan = new Scanner(getClass().getResourceAsStream(filename));
 			int iy = 0;
 			while(iy < MAPHEIGHT && scan.hasNextLine()){
 				String line = scan.nextLine();
@@ -254,54 +291,8 @@ public class Game extends Applet implements Runnable, KeyListener {
 				}
 				++iy;
 			}
-		} catch (FileNotFoundException fnfe) {
-			System.out.println("File not found");
-		}
+		} catch (Exception e) {	}
 	}
-
-	/*
-	    REMOVED FOR NOW
-	public void loadLevelFromFile(String filename){
-		try{
-			//FileInputStream fileIn = new FileInputStream(filename);
-			InputStream fileIn = getClass().getResourceAsStream(filename);
-			ObjectInputStream in = new ObjectInputStream(fileIn);
-			map = (int[][]) in.readObject();
-			in.close();
-			fileIn.close();
-		} catch (IOException ioe) {
-			ioe.printStackTrace();
-		} catch (ClassNotFoundException cnfe) {
-			cnfe.printStackTrace();
-		}
-		for(int iy = 0; iy < MAPHEIGHT; ++iy){
-			for(int ix = 0; ix < MAPWIDTH; ++ix){
-				if(map[ix][iy] > 0){
-					switch(map[ix][iy]){
-						case Map.TYPE_JUMPPAD: entities.add(new Jumppad(ix*CELLWIDTH,iy*CELLWIDTH,Jumppad.POWER));
-							 map[ix][iy] = Map.TYPE_BLANK; break;
-						case Map.TYPE_SPAWN: spawns.add(new Spawn(ix*CELLWIDTH,iy*CELLWIDTH));
-							 map[ix][iy] = Map.TYPE_BLANK; break;
-						case Map.TYPE_LAVA: int cx = 0;
-								while(map[ix+cx][iy] == Map.TYPE_LAVA && ix+cx < MAPWIDTH){
-									map[ix+cx][iy] = Map.TYPE_BLANK; cx++;
-								}
-								entities.add(new Lava(ix*CELLWIDTH, iy*CELLWIDTH, cx));
-								ix = ix+cx-1; break;
-						case Map.TYPE_SAW: int cx2 = 0;
-								while(map[ix+cx2][iy] == Map.TYPE_SAW && ix+cx2 < MAPWIDTH){
-									map[ix+cx2][iy] = Map.TYPE_BLANK; cx2++;
-								}
-								entities.add(new Saw(ix*CELLWIDTH, iy*CELLWIDTH, cx2));
-								ix = ix+cx2-1; break;
-						case Map.TYPE_POWERBOX: entities.add(new PowerBox(ix*CELLWIDTH,iy*CELLWIDTH));
-							 map[ix][iy] = Map.TYPE_BLANK; break;
-					}
-				}
-			}
-		}
-	}
-	*/
 
 	public void drawDebugInfo(Graphics g){
 		g.setColor(Color.black);
@@ -326,4 +317,8 @@ public class Game extends Applet implements Runnable, KeyListener {
 	}
 
 	public void keyTyped(KeyEvent e) {}
+
+	public static final int MAIN_MENU_STATE = 0;
+	public static final int GAME_STATE      = 1;
+	public static final int HOWTO_STATE     = 2;
 }

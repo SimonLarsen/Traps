@@ -20,8 +20,10 @@ public class PowerBox extends Entity {
 		if(e instanceof Player){
 			Player p = (Player)e;
 			if(ownedBy == 0 && p.power == null){
+				RM.getInstance().auPower.play();
 				type = Game.rand.nextInt(TYPES) + 1;
 				ownedBy = p.player;
+				p.power = this;
 			}
 		}
 	}
