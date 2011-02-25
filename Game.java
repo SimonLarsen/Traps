@@ -26,7 +26,7 @@ public class Game extends Applet implements Runnable, KeyListener {
 	public static final int NUMKEYS = 256; // Size of keystates array
 	public static final int SLEEPTIME = 23;
 
-	public static final boolean DEBUG_INFO = true;
+	public static final boolean DEBUG_INFO = false;
 
 	public static Color SKYCOLOR;
 
@@ -41,7 +41,7 @@ public class Game extends Applet implements Runnable, KeyListener {
 	private ArrayList<Spawn> spawns;
 	public static Random rand;
 	public static int start_lives;
-	private int p1skin, p2skin, tileset, menustate;
+	private int p1skin, p2skin, tileset, menustate, selectedmap;
 	private boolean running;
 	private long time;
 	private MP3Player player;
@@ -68,6 +68,7 @@ public class Game extends Applet implements Runnable, KeyListener {
 		p2skin = 2;
 		tileset = 1;
 		start_lives = 100;
+		selectedmap = 0;
 		menustate = MAIN_MENU_STATE;
 
 		new Thread(this).start();
@@ -78,12 +79,13 @@ public class Game extends Applet implements Runnable, KeyListener {
 			switch(menustate){
 				case MAIN_MENU_STATE: showMainMenu(); break;
 				case GAME_STATE: gameLoop(); break;
+				case SELECTION_STATE: showSelectionMenu(); break;
 			}
 		}
 	}
 
 	public void gameLoop(){
-		loadLevelFromASCII("maps/map1.txt");
+		loadLevelFromASCII("maps/map"+selectedmap+".txt");
 		p1 = new Player(spawns.get(rand.nextInt(spawns.size())),1,p1skin);
 		p2 = new Player(spawns.get(rand.nextInt(spawns.size())),2,p2skin);
 		// running = true; UNUSED?
@@ -217,6 +219,105 @@ public class Game extends Applet implements Runnable, KeyListener {
 		}
 	}
 
+	public void showSelectionMenu(){
+		boolean p1done, p2done;
+		p1done = p2done = false;
+		int mapselection = 0;
+		while(menustate == SELECTION_STATE){
+			// Handle player 1
+			if(p1done == false){
+				if(keys[KeyEvent.VK_A]){
+					p1skin--;
+					if(p1skin == p2skin)
+						p1skin--;
+					if(p1skin < 0)
+						p1skin = 4;
+					keys[KeyEvent.VK_A] = false;
+				}
+				if(keys[KeyEvent.VK_D]){
+					p1skin++;
+					if(p1skin == p2skin)
+						p1skin++;
+					if(p1skin > 4)
+						p1skin = 0;
+					keys[KeyEvent.VK_D] = false;
+				}
+				if(keys[KeyEvent.VK_1]){
+					p1done = true;
+				}
+			}
+			// Handle player 2
+			if(p2done == false){
+				if(keys[KeyEvent.VK_LEFT]){
+					p2skin--;
+					if(p2skin == p1skin)
+						p2skin--;
+					if(p2skin < 0)
+						p2skin = 4;
+					keys[KeyEvent.VK_LEFT] = false;
+				}
+				if(keys[KeyEvent.VK_RIGHT]){
+					p2skin++;
+					if(p2skin == p1skin)
+						p2skin++;
+					if(p2skin > 4)
+						p2skin = 0;
+					keys[KeyEvent.VK_RIGHT] = false;
+				}
+				if(keys[KeyEvent.VK_MINUS]){
+					p2done = true;
+				}
+			}
+			g.drawImage(RM.getInstance().imgSelection, 0, 0, BUFFERWIDTH, BUFFERHEIGHT, null);
+
+			if(p1done == true && p2done == true){
+				if(keys[KeyEvent.VK_RIGHT]){
+					mapselection++;
+					if(mapselection > 2)
+						mapselection = 0;
+					keys[KeyEvent.VK_RIGHT] = false;
+				}
+				if(keys[KeyEvent.VK_LEFT]){
+					mapselection--;
+					if(mapselection < 0)
+						mapselection = 2;
+					keys[KeyEvent.VK_LEFT] = false;
+				}
+				if(keys[KeyEvent.VK_MINUS]){
+					selectedmap = mapselection;
+					menustate = GAME_STATE;
+				}
+
+				g.setColor(Color.red);
+				g.drawRect(60+mapselection*68,154,63,48);
+				g.drawRect(61+mapselection*68,155,61,46);
+			}
+
+			// Draw red selection
+			g.setColor(Color.red);
+			g.drawRect(70+36*p1skin,66,35,35);
+			g.drawRect(71+36*p1skin,67,33,33);
+
+			// Draw blue selection
+			g.setColor(Color.blue);
+			g.drawRect(70+36*p2skin,66,35,35);
+			g.drawRect(71+36*p2skin,67,33,33);
+
+			if(p1done == true || p2done == true){
+				g.setColor(new Color(0,0,0,64));
+				if(p1done)
+					g.fillRect(72+p1skin*36,68,32,32);
+				if(p2done)
+					g.fillRect(72+p2skin*36,68,32,32);
+			}
+
+			appletg.drawImage(dbImage,0,0,SCREENWIDTH,SCREENHEIGHT,null);
+			try{
+				Thread.sleep(20);
+			} catch (Exception e) {}
+		}
+	}
+
 	public void showMainMenu(){
 		int selection = 0;
 		while(menustate == MAIN_MENU_STATE){
@@ -231,7 +332,7 @@ public class Game extends Applet implements Runnable, KeyListener {
 			}
 			if(keys[KeyEvent.VK_ENTER]){
 				if(selection == 0)
-					menustate = GAME_STATE;
+					menustate = SELECTION_STATE;
 			}
 			if(selection < 0)
 				selection = 2;
@@ -321,4 +422,5 @@ public class Game extends Applet implements Runnable, KeyListener {
 	public static final int MAIN_MENU_STATE = 0;
 	public static final int GAME_STATE      = 1;
 	public static final int HOWTO_STATE     = 2;
+	public static final int SELECTION_STATE = 3;
 }

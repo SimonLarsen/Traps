@@ -8,7 +8,7 @@ import javax.imageio.ImageIO;
 public class RM {
 	private static final RM INSTANCE = new RM();
 	public static AudioClip auBurn, auSaw, auPower, auJump, auExplosion;
-	public static BufferedImage imgTiles, imgSkins, imgEntities, imgParticles, imgSplash;
+	public static BufferedImage imgTiles, imgSkins, imgEntities, imgParticles, imgSplash, imgSelection;
 	public static Player bgm1;
 	public static Font baseFont, smallFont, menuFont;
 
@@ -25,6 +25,7 @@ public class RM {
 			imgEntities = ImageIO.read(getClass().getResource("gfx/entities.png"));
 			imgParticles = ImageIO.read(getClass().getResource("gfx/particles.png"));
 			imgSplash = ImageIO.read(getClass().getResource("gfx/splash.png"));
+			imgSelection = ImageIO.read(getClass().getResource("gfx/selection.png"));
 			InputStream is = getClass().getResourceAsStream("gfx/font.ttf");
 			baseFont = Font.createFont(Font.TRUETYPE_FONT, is);
 			smallFont = baseFont.deriveFont(8.f);
