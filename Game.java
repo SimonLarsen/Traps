@@ -68,7 +68,7 @@ public class Game extends Applet implements Runnable, KeyListener {
 		p2skin = 2;
 		tileset = 1;
 		start_lives = 100;
-		selectedmap = 0;
+		selectedmap = 1;
 		menustate = MAIN_MENU_STATE;
 
 		new Thread(this).start();
@@ -222,7 +222,7 @@ public class Game extends Applet implements Runnable, KeyListener {
 	public void showSelectionMenu(){
 		boolean p1done, p2done;
 		p1done = p2done = false;
-		int mapselection = 0;
+		int mapselection = 1;
 		while(menustate == SELECTION_STATE){
 			// Handle player 1
 			if(p1done == false){
@@ -244,6 +244,7 @@ public class Game extends Applet implements Runnable, KeyListener {
 				}
 				if(keys[KeyEvent.VK_1]){
 					p1done = true;
+					keys[KeyEvent.VK_1] = false;
 				}
 			}
 			// Handle player 2
@@ -266,6 +267,7 @@ public class Game extends Applet implements Runnable, KeyListener {
 				}
 				if(keys[KeyEvent.VK_MINUS]){
 					p2done = true;
+					keys[KeyEvent.VK_MINUS] = false;
 				}
 			}
 			g.drawImage(RM.getInstance().imgSelection, 0, 0, BUFFERWIDTH, BUFFERHEIGHT, null);
@@ -283,9 +285,11 @@ public class Game extends Applet implements Runnable, KeyListener {
 						mapselection = 2;
 					keys[KeyEvent.VK_LEFT] = false;
 				}
-				if(keys[KeyEvent.VK_MINUS]){
+				if(keys[KeyEvent.VK_MINUS] || keys[KeyEvent.VK_ENTER]){
 					selectedmap = mapselection;
 					menustate = GAME_STATE;
+					keys[KeyEvent.VK_MINUS] = false;
+					keys[KeyEvent.VK_ENTER] = false;
 				}
 
 				g.setColor(Color.red);
@@ -330,9 +334,11 @@ public class Game extends Applet implements Runnable, KeyListener {
 				selection--;
 				keys[KeyEvent.VK_UP] = false;
 			}
-			if(keys[KeyEvent.VK_ENTER]){
+			if(keys[KeyEvent.VK_ENTER] || keys[KeyEvent.VK_MINUS]){
 				if(selection == 0)
 					menustate = SELECTION_STATE;
+				keys[KeyEvent.VK_ENTER] = false;
+				keys[KeyEvent.VK_MINUS] = false;
 			}
 			if(selection < 0)
 				selection = 2;
