@@ -164,12 +164,10 @@ public class Player extends Entity {
 			RM.getInstance().auJump.play();
 		}
 		else if(e instanceof PowerBox){
-			/*
-			if(power == null){
-				power = (PowerBox)e;
-				RM.getInstance().auPower.play();
-			}
-			*/
+		}
+		else if(e instanceof Lava){
+			Game.keys[cs[0]] = false;	
+			Game.keys[cs[1]] = false;	
 		}
 		else if(e instanceof Player){
 			if(punishment == PowerBox.TYPE_BOMB && punishmentTime < PowerBox.POWER_TIMES[PowerBox.TYPE_BOMB]-BOMB_WAIT){

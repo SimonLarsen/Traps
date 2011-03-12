@@ -10,10 +10,6 @@ import java.util.Iterator;
 import java.util.Random;
 import java.util.Scanner;
 
-/*
-	TODO: Fix PowerBox ownage problem :(
-*/
-
 public class Game extends Applet implements Runnable, KeyListener {
 	public static final int MAPWIDTH = 20;
 	public static final int MAPHEIGHT = 15;
@@ -34,7 +30,7 @@ public class Game extends Applet implements Runnable, KeyListener {
 	private Graphics appletg;
 	private BufferedImage dbImage;
 	public static int[][] map;
-	private boolean keys[];
+	public static boolean keys[];
 	public static Player p1,p2;
 	private ArrayList<Entity> entities;
 	private ArrayList<Particle> particles;
@@ -292,7 +288,7 @@ public class Game extends Applet implements Runnable, KeyListener {
 					keys[KeyEvent.VK_ENTER] = false;
 				}
 
-				g.setColor(Color.red);
+				g.setColor(Color.blue);
 				g.drawRect(60+mapselection*68,154,63,48);
 				g.drawRect(61+mapselection*68,155,61,46);
 			}
@@ -316,8 +312,14 @@ public class Game extends Applet implements Runnable, KeyListener {
 			}
 
 			appletg.drawImage(dbImage,0,0,SCREENWIDTH,SCREENHEIGHT,null);
+
+			if(keys[KeyEvent.VK_ESCAPE]){
+				menustate = MAIN_MENU_STATE;
+				keys[KeyEvent.VK_ESCAPE] = false;
+			}
+
 			try{
-				Thread.sleep(20);
+				Thread.sleep(25);
 			} catch (Exception e) {}
 		}
 	}
@@ -346,8 +348,8 @@ public class Game extends Applet implements Runnable, KeyListener {
 				selection = 0;
 
 			g.drawImage(RM.getInstance().imgSplash, 0, 0, BUFFERWIDTH, BUFFERHEIGHT, null);
-			g.drawImage(RM.getInstance().imgEntities, 48, 92+selection*45, 64, 108+selection*45, 80,0,96,16, null);
-			g.drawImage(RM.getInstance().imgEntities, 256, 92+selection*45, 272, 108+selection*45, 80,0,96,16, null);
+			g.drawImage(RM.getInstance().imgEntities, 48+selection*16, 87+selection*37, 64+selection*16, 103+selection*37, 80,0,96,16, null);
+			g.drawImage(RM.getInstance().imgEntities, 256-selection*16, 87+selection*37, 272-selection*16, 103+selection*37, 80,0,96,16, null);
 			appletg.drawImage(dbImage, 0, 0, SCREENWIDTH, SCREENHEIGHT, null);
 
 			try{
