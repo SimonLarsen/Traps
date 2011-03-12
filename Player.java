@@ -223,6 +223,9 @@ public class Player extends Entity {
 	}
 
 	public void draw(Graphics g){
+		if(lives <= 0)
+			return;
+
 		int srcx = 0;
 		// On ground
 		if(yspeed == 0){

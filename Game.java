@@ -47,7 +47,6 @@ public class Game extends Applet implements Runnable, KeyListener {
 		g = dbImage.createGraphics();
 		appletg = this.getGraphics();
 		keys = new boolean[NUMKEYS];
-		entities = new ArrayList<Entity>();
 		particles = new ArrayList<Particle>();
 		spawns = new ArrayList<Spawn>();
 		addKeyListener(this);
@@ -58,12 +57,11 @@ public class Game extends Applet implements Runnable, KeyListener {
 		RM.getInstance().loadGFX();
 		player.play();
 
-		g.setFont(RM.getInstance().smallFont);
 		SKYCOLOR = new Color(124,176,195);
 		p1skin = 1;
-		p2skin = 2;
+		p2skin = 0;
 		tileset = 1;
-		start_lives = 100;
+		start_lives = 10;
 		selectedmap = 1;
 		menustate = MAIN_MENU_STATE;
 
@@ -84,7 +82,7 @@ public class Game extends Applet implements Runnable, KeyListener {
 		loadLevelFromASCII("maps/map"+selectedmap+".txt");
 		p1 = new Player(spawns.get(rand.nextInt(spawns.size())),1,p1skin);
 		p2 = new Player(spawns.get(rand.nextInt(spawns.size())),2,p2skin);
-		// running = true; UNUSED?
+
 		while(p1.lives > 0 && p2.lives > 0){
 			time = System.currentTimeMillis();
 			/*
@@ -212,6 +210,49 @@ public class Game extends Applet implements Runnable, KeyListener {
 					Thread.sleep(SLEEPTIME - diffTime);
 				} catch (Exception e) {}
 			}
+		}
+
+		// Show retry screen
+		g.setColor(new Color(0,0,0,128));
+		g.fillRect(0,0,BUFFERWIDTH,BUFFERHEIGHT);
+		g.setColor(Color.white);
+		g.setFont(RM.getInstance().menuFont);
+		if(p1.lives > p2.lives){
+			g.drawString("Player 1 wins!",50,64);
+			p1.draw(g);
+		}
+		else if(p2.lives > p1.lives){
+			g.drawString("Player 2 wins!",50,64);
+			p2.draw(g);
+		}
+		else
+			g.drawString("You are both losers!",0,64);
+
+		g.drawString("Press ENTER",70,123);
+		g.drawString("to play again!",50,145);
+
+		g.drawString("Press ESCAPE",64,190);
+		g.drawString("to reselect!",64,212);
+
+		keys[KeyEvent.VK_ENTER] = false;
+		keys[KeyEvent.VK_ESCAPE] = false;
+
+		boolean retry_selection = false;
+		while(retry_selection == false){
+			if(keys[KeyEvent.VK_ENTER]){
+				menustate = GAME_STATE;
+				retry_selection = true;
+			}
+			else if(keys[KeyEvent.VK_ESCAPE]){
+				menustate = SELECTION_STATE;
+				retry_selection = true;
+				keys[KeyEvent.VK_ESCAPE] = false;
+			}
+
+			appletg.drawImage(dbImage, 0, 0, SCREENWIDTH, SCREENHEIGHT, this); 
+			try {
+				Thread.sleep(20);
+			} catch (Exception e) {}
 		}
 	}
 
@@ -360,6 +401,7 @@ public class Game extends Applet implements Runnable, KeyListener {
 
 	public void loadLevelFromASCII(String filename){
 		map = new int[MAPWIDTH][MAPHEIGHT];
+		entities = new ArrayList<Entity>();
 		try{
 			//File file = new File(filename);
 			//File file = new File(getClass().getResource(filename));

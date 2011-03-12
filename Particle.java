@@ -1,5 +1,4 @@
 import java.awt.Graphics;
-import java.awt.image.BufferedImage;
 
 public class Particle {
 	public int x,y;
