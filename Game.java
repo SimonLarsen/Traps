@@ -48,7 +48,6 @@ public class Game extends Applet implements Runnable, KeyListener {
 		appletg = this.getGraphics();
 		keys = new boolean[NUMKEYS];
 		particles = new ArrayList<Particle>();
-		spawns = new ArrayList<Spawn>();
 		addKeyListener(this);
 		rand = new Random();
 		player = new MP3Player();
@@ -212,6 +211,10 @@ public class Game extends Applet implements Runnable, KeyListener {
 			}
 		}
 
+		showRetryScreen();
+	}
+
+	public void showRetryScreen(){
 		// Show retry screen
 		g.setColor(new Color(0,0,0,128));
 		g.fillRect(0,0,BUFFERWIDTH,BUFFERHEIGHT);
@@ -401,7 +404,9 @@ public class Game extends Applet implements Runnable, KeyListener {
 
 	public void loadLevelFromASCII(String filename){
 		map = new int[MAPWIDTH][MAPHEIGHT];
+		// TODO: EMPTY INSTEAD
 		entities = new ArrayList<Entity>();
+		spawns = new ArrayList<Spawn>();
 		try{
 			//File file = new File(filename);
 			//File file = new File(getClass().getResource(filename));

@@ -20,21 +20,23 @@ public class SpawnEffect extends Particle {
 
 	public void update(){
 		step++;
-		if(step > 16)
+		if(step > 32)
 			alive = false;
 	}
 
 	public void draw(Graphics g){
 		g.setFont(RM.getInstance().smallFont);
 		if(player == 1)
-			g.setColor(new Color(255,0,0,255-12*step));
+			g.setColor(new Color(255,0,0,255-7*step));
 		else
-			g.setColor(new Color(0,0,255,255-12*step));
+			g.setColor(new Color(0,0,255,255-7*step));
 
-		g.fillRect(x+7-step,y+7+step,2,2);
-		g.fillRect(x+7-step,y+7-step,2,2);
-		g.fillRect(x+7+step,y+7+step,2,2);
-		g.fillRect(x+7+step,y+7-step,2,2);
+		if(step < 16){
+			g.fillRect(x+7-step, y+7+step, 2,2);
+			g.fillRect(x+7-step, y+7-step, 2,2);
+			g.fillRect(x+7+step, y+7+step, 2,2);
+			g.fillRect(x+7+step, y+7-step, 2,2);
+		}
 		g.drawString(String.valueOf(lives),x+3,y+8);
 	}
 }
