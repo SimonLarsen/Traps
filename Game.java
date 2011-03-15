@@ -40,7 +40,7 @@ public class Game extends Applet implements Runnable, KeyListener {
 	private int p1skin, p2skin, tileset, menustate, selectedmap;
 	private boolean running;
 	private long time;
-	private MP3Player player;
+	//private MP3Player player;
 
 	public void start(){
 		dbImage = new BufferedImage(BUFFERWIDTH,BUFFERHEIGHT,BufferedImage.TYPE_INT_RGB);
@@ -51,11 +51,11 @@ public class Game extends Applet implements Runnable, KeyListener {
 		spawns = new ArrayList<Spawn>();
 		addKeyListener(this);
 		rand = new Random();
-		player = new MP3Player();
+		//player = new MP3Player();
 
 		RM.getInstance().loadSFX();
 		RM.getInstance().loadGFX();
-		player.play();
+		//player.play();
 
 		SKYCOLOR = new Color(124,176,195);
 		p1skin = 1;
@@ -218,21 +218,22 @@ public class Game extends Applet implements Runnable, KeyListener {
 		g.setColor(Color.white);
 		g.setFont(RM.getInstance().menuFont);
 		if(p1.lives > p2.lives){
-			g.drawString("Player 1 wins!",50,64);
+			//g.drawString("Player 1 wins!",50,64);
+			drawStringCenter(g,"Player 1 wins!",64,0);
 			p1.draw(g);
 		}
 		else if(p2.lives > p1.lives){
-			g.drawString("Player 2 wins!",50,64);
+			drawStringCenter(g,"Player 2 wins!",64,0);
 			p2.draw(g);
 		}
 		else
-			g.drawString("You are both losers!",0,64);
+			drawStringCenter(g,"You are both losers!",64,0);
 
-		g.drawString("Press ENTER",70,123);
-		g.drawString("to play again!",50,145);
+		drawStringCenter(g,"Press ENTER",123,0);
+		drawStringCenter(g,"to play again!",145,0);
 
-		g.drawString("Press ESCAPE",64,190);
-		g.drawString("to reselect!",64,212);
+		drawStringCenter(g,"Press ESCAPE",190,0);
+		drawStringCenter(g,"to reselect!",212,0);
 
 		keys[KeyEvent.VK_ENTER] = false;
 		keys[KeyEvent.VK_ESCAPE] = false;
@@ -453,6 +454,11 @@ public class Game extends Applet implements Runnable, KeyListener {
 		g.drawString("P2 X: "+(int)p2.x+" Y: "+(int)p2.y,8,64);
 		g.drawString("P1 lives: "+p1.lives,8,80);
 		g.drawString("P2 lives: "+p2.lives,8,96);
+	}
+
+	public void drawStringCenter(Graphics g, String str, int y, int xoffset){
+		int strx = (BUFFERWIDTH-g.getFontMetrics().stringWidth(str))/2;
+		g.drawString(str,strx+xoffset,y);
 	}
 
 	public void keyPressed(KeyEvent e) {
