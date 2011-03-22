@@ -24,7 +24,7 @@ public class RM {
 			imgTiles = ImageIO.read(getClass().getResource("gfx/tiles.png"));
 			imgEntities = ImageIO.read(getClass().getResource("gfx/entities.png"));
 			imgParticles = ImageIO.read(getClass().getResource("gfx/particles.png"));
-			imgSplash = ImageIO.read(getClass().getResource("gfx/new_splash.png"));
+			imgSplash = ImageIO.read(getClass().getResource("gfx/splash.png"));
 			imgSelection = ImageIO.read(getClass().getResource("gfx/selection.png"));
 			InputStream is = getClass().getResourceAsStream("gfx/font.ttf");
 			baseFont = Font.createFont(Font.TRUETYPE_FONT, is);
