@@ -6,13 +6,13 @@ h3. Player 1 (red)
 
 bc. A and D: Move
 W: Jump
-1: Use powerup
+1 (one): Use powerup
 
 h3. Player 2 (blue)
 
 bc. Arrow keys: Move
 Up key: Jump
-'.' (dash): Use powerup
+'-' (dash): Use powerup
 
 h2. ASCII map file format
 
