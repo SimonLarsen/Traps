@@ -2,13 +2,13 @@ h1. JUMP FREEZE SWITCH BURN
 
 h2. Controls
 
-h3. Player 1 (red)
+h3. %{color:red}Player 1%
 
 bc. A and D: Move
 W: Jump
 1 (one): Use powerup
 
-h3. Player 2 (blue)
+h3. %{color:blue}Player 2%
 
 bc. Arrow keys: Move
 Up key: Jump
