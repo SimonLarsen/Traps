@@ -1,8 +1,7 @@
-=========================
-  ASCII map file format
-=========================
+h1. JUMP FREEZE SWITCH BURN
 
-+---+----------+
+h2. ASCII map file format
+
 | | | wall     |
 | = | platform |
 | # | block    |
@@ -11,10 +10,10 @@
 | ? | powerbox |
 | S | spawn    |
 | * | saw      |
-+---+----------+
 
-Example:
-|#****########****#|
+h3. Example:
+
+bc. |#****########****#|
 |                  |
 |                  |
 |S?              ?S|
