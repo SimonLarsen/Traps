@@ -1,5 +1,6 @@
 main: Game.java
-	javac -cp .:jl1.0.1.jar *.java
+	javac *.java
+	#javac -cp .:jl1.0.1.jar *.java
 
 run:
 	appletviewer Traps.html

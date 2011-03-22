@@ -48,6 +48,7 @@ public class Game extends Applet implements Runnable, KeyListener {
 		appletg = this.getGraphics();
 		keys = new boolean[NUMKEYS];
 		particles = new ArrayList<Particle>();
+		spawns = new ArrayList<Spawn>();
 		addKeyListener(this);
 		rand = new Random();
 		//player = new MP3Player();
@@ -96,12 +97,14 @@ public class Game extends Applet implements Runnable, KeyListener {
 			else if(p1Status == Player.RETURN_DIED){
 				p1.lives--;
 				p1.respawn(spawns.get(rand.nextInt(spawns.size())));
+				particles.add(new SpawnEffect(p1));
 			}
 			else if(p1Status == Player.RETURN_BOMBED){
 				RM.getInstance().auExplosion.play();
 				p1.lives--;
 				particles.add(new BloodExplosion((int)p1.x+6,(int)p1.y+4));
 				p1.respawn(spawns.get(rand.nextInt(spawns.size())));
+				particles.add(new SpawnEffect(p1));
 			}
 
 			if(p2Status >= 1 && p2Status <= PowerBox.TYPES)
@@ -109,12 +112,14 @@ public class Game extends Applet implements Runnable, KeyListener {
 			else if(p2Status == Player.RETURN_DIED){
 				p2.lives--;
 				p2.respawn(spawns.get(rand.nextInt(spawns.size())));
+				particles.add(new SpawnEffect(p2));
 			}
 			else if(p2Status == Player.RETURN_BOMBED){
 				RM.getInstance().auExplosion.play();
 				p2.lives--;
 				particles.add(new BloodExplosion((int)p2.x+6,(int)p2.y+4));
 				p2.respawn(spawns.get(rand.nextInt(spawns.size())));
+				particles.add(new SpawnEffect(p2));
 			}
 
 			// Collide players with entities
@@ -211,10 +216,6 @@ public class Game extends Applet implements Runnable, KeyListener {
 			}
 		}
 
-		showRetryScreen();
-	}
-
-	public void showRetryScreen(){
 		// Show retry screen
 		g.setColor(new Color(0,0,0,128));
 		g.fillRect(0,0,BUFFERWIDTH,BUFFERHEIGHT);
@@ -405,9 +406,7 @@ public class Game extends Applet implements Runnable, KeyListener {
 
 	public void loadLevelFromASCII(String filename){
 		map = new int[MAPWIDTH][MAPHEIGHT];
-		// TODO: EMPTY INSTEAD
 		entities = new ArrayList<Entity>();
-		spawns = new ArrayList<Spawn>();
 		try{
 			//File file = new File(filename);
 			//File file = new File(getClass().getResource(filename));

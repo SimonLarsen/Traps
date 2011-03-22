@@ -26,10 +26,14 @@ public class SpawnEffect extends Particle {
 
 	public void draw(Graphics g){
 		g.setFont(RM.getInstance().smallFont);
-		if(player == 1)
+		if(player == 1){
 			g.setColor(new Color(255,0,0,255-7*step));
-		else
+			g.drawString(String.valueOf(lives),(int)Game.p1.x+1,(int)Game.p1.y-4);
+		}
+		else{
 			g.setColor(new Color(0,0,255,255-7*step));
+			g.drawString(String.valueOf(lives),(int)Game.p2.x+1,(int)Game.p2.y-4);
+		}
 
 		if(step < 16){
 			g.fillRect(x+7-step, y+7+step, 2,2);
@@ -37,6 +41,5 @@ public class SpawnEffect extends Particle {
 			g.fillRect(x+7+step, y+7+step, 2,2);
 			g.fillRect(x+7+step, y+7-step, 2,2);
 		}
-		g.drawString(String.valueOf(lives),x+3,y+8);
 	}
 }
