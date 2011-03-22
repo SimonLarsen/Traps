@@ -1,5 +1,19 @@
 h1. JUMP FREEZE SWITCH BURN
 
+h2. Controls
+
+h3. Player 1 (red)
+
+bc. A and D: Move
+W: Jump
+1: Use powerup
+
+h3. Player 2 (blue)
+
+bc. Arrow keys: Move
+Up key: Jump
+'.' (dash): Use powerup
+
 h2. ASCII map file format
 
 | &#124; | wall     |
