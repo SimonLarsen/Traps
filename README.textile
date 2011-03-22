@@ -2,7 +2,7 @@ h1. JUMP FREEZE SWITCH BURN
 
 h2. ASCII map file format
 
-| \| | wall     |
+| ==|== | wall     |
 | = | platform |
 | # | block    |
 | ~ | lava     |
